@@ -1,4 +1,4 @@
-package com.ticketrush.gateway_service;
+package com.ticketrush;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
