@@ -141,6 +141,7 @@ vite.config.ts.timestamp-*
 # IntelliJ
 .idea/
 *.iml
+*.iws
 
 # Gradle
 .gradle/
@@ -148,3 +149,6 @@ build/
 
 # Mac
 .DS_Store
+
+# Ignore Kotlin plugin data
+.kotlin
