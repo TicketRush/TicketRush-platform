@@ -15,12 +15,12 @@ jobs:
           TITLE="${{ github.event.pull_request.title }}"
           echo "PR Title: $TITLE"
 
-          REGEX='^\[(FEAT|FIX|REFACTOR|DOCS|TEST|CHORE)\] #[0-9]+ .+$'
+          REGEX='^\[(Feat|Fix|Refactor|Docs|Test|Chore)\] #[0-9]+ .+$'
 
           if [[ ! "$TITLE" =~ $REGEX ]]; then
             echo "PR 제목 형식이 올바르지 않습니다."
-            echo "허용 형식: [FEAT] #23 로그인 API 구현"
-            echo "허용 TYPE: FEAT, FIX, REFACTOR, DOCS, TEST, CHORE"
+            echo "허용 형식: [Feat] #23 로그인 API 구현"
+            echo "허용 TYPE: Feat, Fix, Refactor, Docs, Test, Chore"
             exit 1
           fi
 
