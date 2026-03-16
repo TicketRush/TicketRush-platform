@@ -1,6 +1,6 @@
 name: Chore Template
 description: 설정, 빌드, 의존성, 환경 정리 등 기타 작업용 템플릿
-title: "[Chore] "
+title: "[모듈명] "
 labels: ["chore"]
 
 body:
