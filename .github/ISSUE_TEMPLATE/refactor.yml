@@ -4,22 +4,6 @@ title: "[Refactor] "
 labels: ["refactor"]
 
 body:
-  - type: dropdown
-    id: category
-    attributes:
-      label: "✔️ 리팩토링 종류"
-      description: "어떤 유형의 리팩토링인지 선택해주세요."
-      options:
-        - 기타
-        - 이름 변경
-        - 메서드 분리
-        - 클래스 구조 개선
-        - 중복 코드 제거
-        - 코드 포맷팅 개선
-        - 성능 개선
-    validations:
-      required: true
-
   - type: input
     id: target
     attributes:

@@ -4,21 +4,6 @@ title: "[Test] "
 labels: ["test"]
 
 body:
-  - type: dropdown
-    id: category
-    attributes:
-      label: "✔️ 테스트 종류"
-      description: "어떤 테스트를 작업하는지 선택해주세요."
-      options:
-        - 기타
-        - 단위 테스트
-        - 통합 테스트
-        - API 테스트
-        - 회귀 테스트
-        - 성능 테스트
-    validations:
-      required: true
-
   - type: input
     id: summary
     attributes:

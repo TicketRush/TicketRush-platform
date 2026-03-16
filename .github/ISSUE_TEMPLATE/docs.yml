@@ -4,22 +4,6 @@ title: "[Docs] "
 labels: ["docs"]
 
 body:
-  - type: dropdown
-    id: category
-    attributes:
-      label: "✔️ 문서 종류"
-      description: "어떤 문서를 작업하는지 선택해주세요."
-      options:
-        - 기타
-        - README
-        - API 문서
-        - 설정 문서
-        - 회의/정리 문서
-        - 배포 문서
-        - 트러블슈팅 문서
-    validations:
-      required: true
-
   - type: input
     id: summary
     attributes:

@@ -4,21 +4,6 @@ title: "[Feat] "
 labels: ["feature"]
 
 body:
-  - type: dropdown
-    id: category
-    attributes:
-      label: "✔️ 기능 종류"
-      description: "추가할 기능의 종류를 선택해주세요."
-      options:
-        - 기타
-        - API 구현
-        - Config 구현
-        - 비즈니스 로직 구현
-        - UI 구현
-        - 인프라 구성
-    validations:
-      required: true
-
   - type: input
     id: summary
     attributes:

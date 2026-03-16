@@ -4,22 +4,6 @@ title: "[Fix] "
 labels: ["bug"]
 
 body:
-  - type: dropdown
-    id: category
-    attributes:
-      label: "✔️ 수정 종류"
-      description: "수정할 항목을 선택해주세요."
-      options:
-        - 기타
-        - API 수정
-        - Config 수정
-        - 비즈니스 로직 수정
-        - UI 수정
-        - 인프라 수정
-        - 배포/운영 오류 수정
-    validations:
-      required: true
-
   - type: input
     id: problem
     attributes:
