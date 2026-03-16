@@ -146,3 +146,11 @@ build
 
 # Ignore Kotlin plugin data
 .kotlin
+
+# OS
+.DS_Store
+
+# IntelliJ
+.idea/
+*.iml
+*.iws
