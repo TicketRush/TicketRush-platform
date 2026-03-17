@@ -15,7 +15,6 @@ services:
     image: apache/kafka:3.7.0
     container_name: kafka
     ports:
-      - "127.0.0.1:9092:9092"
       - "127.0.0.1:29092:29092"
     environment:
       KAFKA_NODE_ID: 1
