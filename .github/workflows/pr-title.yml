@@ -16,7 +16,7 @@ jobs:
           echo "PR Title: $TITLE"
 
           # 다중 이슈 번호를 허용하는 정규표현식 (예: #1, 2, 4 또는 #1, #2, #3)
-          REGEX='^\[(Feat|Fix|Refactor|Docs|Test|Chore)\] #[0-9]+([, ]+#?[0-9]+)* .+$'
+          REGEX='^\[(Feat|Fix|Refactor|Docs|Test|Chore|Infra)\] #[0-9]+([, ]+#?[0-9]+)* .+$'
 
           if [[ ! "$TITLE" =~ $REGEX ]]; then
             echo "PR 제목 형식이 올바르지 않습니다."
