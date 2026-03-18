@@ -22,7 +22,7 @@ jobs:
             echo "PR 제목 형식이 올바르지 않습니다."
             echo "허용 형식(단일): [Feat] #23 로그인 API 구현"
             echo "허용 형식(다중): [Chore] #1, 2, 4 설정 파일 업데이트"
-            echo "허용 TYPE: Feat, Fix, Refactor, Docs, Test, Chore"
+            echo "허용 TYPE: Feat, Fix, Refactor, Docs, Test, Chore, Infra"
             exit 1
           fi
 
