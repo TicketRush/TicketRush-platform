@@ -2,10 +2,11 @@
 rootProject.name = 'TicketRush'
 
 // 사용할 도메인 설정
-include 'gateway-service'
-include 'common'
 include 'auth-service'
-include 'user-service'
-include 'payment-service'
 include 'booking-service'
+include 'common'
+include 'gateway-service'
+include 'payment-service'
+include 'seat-service'
 include 'ticket-service'
+include 'user-service'
