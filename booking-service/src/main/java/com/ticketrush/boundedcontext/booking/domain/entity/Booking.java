@@ -26,6 +26,9 @@ public class Booking extends AutoIdBaseEntity {
   @Column(name = "performance_id", nullable = false)
   private Long performanceId;
 
+  @Column(nullable = false)
+  private Long seatId;
+
   @Column(name = "booking_number", length = 50, nullable = false, unique = true)
   private String bookingNumber;
 
@@ -41,11 +44,13 @@ public class Booking extends AutoIdBaseEntity {
       String bookingNumber,
       Long userId,
       Long performanceId,
+      Long seatId,
       Long price,
       BookingStatus bookingStatus) {
-    this.bookingNumber = bookingNumber;
     this.userId = userId;
     this.performanceId = performanceId;
+    this.seatId = seatId;
+    this.bookingNumber = bookingNumber;
     this.price = price;
     this.bookingStatus = bookingStatus;
   }
