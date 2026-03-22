@@ -22,17 +22,17 @@ import lombok.NoArgsConstructor;
 public class Seat extends AutoIdBaseEntity {
 
   @Column(nullable = false)
-  private Long performanceId; // 공연 ID (단순 참조)
+  private Long performanceId;
 
   @Column(nullable = false, length = 10)
-  private String seatNumber; // 예: "A-5"
+  private String seatNumber;
 
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)
-  private SeatStatus seatStatus; // AVAILABLE, HOLDING, SOLD
+  private SeatStatus seatStatus;
 
   @Column(name = "hold_expires_at")
-  private LocalDateTime holdExpiresAt; // 5분 임시 선점 만료 시간
+  private LocalDateTime holdExpiresAt;
 
   @Builder
   public Seat(
