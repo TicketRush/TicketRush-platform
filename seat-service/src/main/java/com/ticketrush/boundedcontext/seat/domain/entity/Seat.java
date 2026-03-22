@@ -31,15 +31,15 @@ public class Seat extends AutoIdBaseEntity {
   @Column(nullable = false)
   private SeatStatus seatStatus;
 
-  @Column(name = "hold_expires_at")
-  private LocalDateTime holdExpiresAt;
+  @Column(name = "hold_expired_at")
+  private LocalDateTime holdExpiredAt;
 
   @Builder
   public Seat(
-      Long performanceId, String seatNumber, SeatStatus seatStatus, LocalDateTime holdExpiresAt) {
+      Long performanceId, String seatNumber, SeatStatus seatStatus, LocalDateTime holdExpiredAt) {
     this.performanceId = performanceId;
     this.seatNumber = seatNumber;
     this.seatStatus = seatStatus;
-    this.holdExpiresAt = holdExpiresAt;
+    this.holdExpiredAt = holdExpiredAt;
   }
 }
