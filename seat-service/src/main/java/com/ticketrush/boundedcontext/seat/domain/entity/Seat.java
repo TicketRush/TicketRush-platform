@@ -22,6 +22,9 @@ import lombok.NoArgsConstructor;
 public class Seat extends AutoIdBaseEntity {
 
   @Column(nullable = false)
+  private Long seatLayoutId;
+
+  @Column(nullable = false)
   private Long performanceId;
 
   @Column(nullable = false, length = 10)
@@ -36,7 +39,8 @@ public class Seat extends AutoIdBaseEntity {
 
   @Builder
   public Seat(
-      Long performanceId, String seatNumber, SeatStatus seatStatus, LocalDateTime holdExpiredAt) {
+      Long seatLayoutId, Long performanceId, String seatNumber, SeatStatus seatStatus, LocalDateTime holdExpiredAt) {
+    this.seatLayoutId = seatLayoutId;
     this.performanceId = performanceId;
     this.seatNumber = seatNumber;
     this.seatStatus = seatStatus;
