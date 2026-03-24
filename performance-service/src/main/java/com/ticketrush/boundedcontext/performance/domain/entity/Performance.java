@@ -3,6 +3,7 @@ package com.ticketrush.boundedcontext.performance.domain.entity;
 import com.ticketrush.boundedcontext.performance.domain.enums.Genre;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
@@ -17,6 +18,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
 @Table(name = "performance")
@@ -24,6 +27,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@EntityListeners(AuditingEntityListener.class) // [추가] Auditing 리스너 등록
 public class Performance {
 
   @Id
@@ -72,6 +76,7 @@ public class Performance {
   @Column(columnDefinition = "json")
   private String facilities;
 
+  @CreatedDate
   @Column(nullable = false, updatable = false)
   private LocalDateTime createdAt;
 }
