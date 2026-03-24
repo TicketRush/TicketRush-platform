@@ -1,4 +1,4 @@
-package com.ticketrush.boundedcontext.performance.domain.enums;
+package com.ticketrush.boundedcontext.performance.domain.types;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

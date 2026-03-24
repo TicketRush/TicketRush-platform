@@ -1,39 +1,31 @@
 package com.ticketrush.boundedcontext.performance.domain.entity;
 
-import com.ticketrush.boundedcontext.performance.domain.enums.Genre;
+import com.ticketrush.boundedcontext.performance.domain.types.Genre;
+import com.ticketrush.boundedcontext.performance.domain.types.PerformanceStatus;
+import com.ticketrush.global.jpa.entity.AutoIdBaseEntity;
+import jakarta.persistence.AttributeOverride;
+import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EntityListeners;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Table;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.List;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
 @Table(name = "performance")
 @Getter
-@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
-@EntityListeners(AuditingEntityListener.class)
-public class Performance {
-
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "performance_id") // ERD PK 명칭 매핑
-  private Long performanceId;
+@AttributeOverride(name = "id", column = @Column(name = "performance_id"))
+public class Performance extends AutoIdBaseEntity {
 
   @Column(nullable = false, length = 200)
   private String title;
@@ -42,7 +34,7 @@ public class Performance {
   private String performer;
 
   @Enumerated(EnumType.STRING)
-  @Column(nullable = false, length = 50)
+  @Column(nullable = false)
   private Genre genre;
 
   @Column(columnDefinition = "TEXT")
@@ -63,20 +55,60 @@ public class Performance {
   @Column(nullable = false)
   private Integer totalSeats;
 
+  @Column(length = 255)
   private String address;
 
-  private String status;
+  @Enumerated(EnumType.STRING)
+  @Column(nullable = false)
+  private PerformanceStatus status;
 
   private String image3dUrl;
+
   private String imageMainUrl;
 
-  @Column(columnDefinition = "json")
-  private String imageGalleryUrls;
+  @ElementCollection
+  @CollectionTable(name = "performance_images", joinColumns = @JoinColumn(name = "performance_id"))
+  @Column(name = "image_url")
+  private List<String> imageGalleryUrls;
 
-  @Column(columnDefinition = "json")
-  private String facilities;
+  @ElementCollection
+  @CollectionTable(
+      name = "performance_facilities",
+      joinColumns = @JoinColumn(name = "performance_id"))
+  @Column(name = "facility_name")
+  private List<String> facilities;
 
-  @CreatedDate
-  @Column(nullable = false, updatable = false)
-  private LocalDateTime createdAt;
+  @Builder
+  private Performance(
+      String title,
+      String performer,
+      Genre genre,
+      String description,
+      LocalDate showDate,
+      LocalTime showTime,
+      Integer durationMinutes,
+      Long price,
+      Integer totalSeats,
+      String address,
+      PerformanceStatus status,
+      String image3dUrl,
+      String imageMainUrl,
+      List<String> imageGalleryUrls,
+      List<String> facilities) {
+    this.title = title;
+    this.performer = performer;
+    this.genre = genre;
+    this.description = description;
+    this.showDate = showDate;
+    this.showTime = showTime;
+    this.durationMinutes = durationMinutes;
+    this.price = price;
+    this.totalSeats = totalSeats;
+    this.address = address;
+    this.status = status;
+    this.image3dUrl = image3dUrl;
+    this.imageMainUrl = imageMainUrl;
+    this.imageGalleryUrls = imageGalleryUrls;
+    this.facilities = facilities;
+  }
 }
