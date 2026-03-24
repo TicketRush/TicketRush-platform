@@ -27,7 +27,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@EntityListeners(AuditingEntityListener.class) // [추가] Auditing 리스너 등록
+@EntityListeners(AuditingEntityListener.class)
 public class Performance {
 
   @Id
@@ -35,11 +35,11 @@ public class Performance {
   @Column(name = "performance_id") // ERD PK 명칭 매핑
   private Long performanceId;
 
-  @Column(nullable = false, length = 200) // ERD 기준 길이 수정
+  @Column(nullable = false, length = 200)
   private String title;
 
   @Column(length = 200)
-  private String performer; // 누락 필드 추가
+  private String performer;
 
   @Enumerated(EnumType.STRING)
   @Column(nullable = false, length = 50)
