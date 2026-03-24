@@ -30,11 +30,11 @@ import lombok.NoArgsConstructor;
 public class SocialAccount extends AutoIdBaseEntity {
 
   @OneToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "user_id", nullable = false)
+  @JoinColumn(name = "user_id", nullable = false, unique = true)
   private User user;
 
   @Enumerated(EnumType.STRING)
-  @Column(name = "social_provider", nullable = false, length = 20)
+  @Column(name = "social_provider", nullable = false)
   private SocialProvider socialProvider;
 
   @Column(name = "provider_user_id", nullable = false, length = 100)
