@@ -22,7 +22,7 @@ public class UserAccount extends AutoIdBaseEntity {
   @JoinColumn(name = "user_id", nullable = false, unique = true)
   private User user;
 
-  @Column(length = 50)
+  @Column(length = 255)
   private String password;
 
   @Builder
