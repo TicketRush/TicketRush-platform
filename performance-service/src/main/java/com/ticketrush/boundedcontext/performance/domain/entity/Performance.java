@@ -60,7 +60,7 @@ public class Performance extends AutoIdBaseEntity {
 
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)
-  private PerformanceStatus status;
+  private PerformanceStatus performanceStatus;
 
   private String image3dUrl;
 
@@ -90,7 +90,7 @@ public class Performance extends AutoIdBaseEntity {
       Long price,
       Integer totalSeats,
       String address,
-      PerformanceStatus status,
+      PerformanceStatus performanceStatus,
       String image3dUrl,
       String imageMainUrl,
       List<String> imageGalleryUrls,
@@ -105,7 +105,7 @@ public class Performance extends AutoIdBaseEntity {
     this.price = price;
     this.totalSeats = totalSeats;
     this.address = address;
-    this.status = status;
+    this.performanceStatus = performanceStatus;
     this.image3dUrl = image3dUrl;
     this.imageMainUrl = imageMainUrl;
     this.imageGalleryUrls = imageGalleryUrls;
