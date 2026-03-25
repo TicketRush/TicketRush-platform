@@ -1,5 +1,6 @@
 package com.ticketrush.global.filter;
 
+import com.ticketrush.global.constants.TraceIdConstants;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,7 +19,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 public class TraceIdFilter extends OncePerRequestFilter {
 
   private static final String TRACE_ID_HEADER = "X-Trace-Id";
-  private static final String TRACE_ID_KEY = "TRACE_ID";
 
   @Override
   protected void doFilterInternal(
@@ -30,7 +30,7 @@ public class TraceIdFilter extends OncePerRequestFilter {
       String traceId = extractOrGenerateTraceId(request);
 
       // 2. MDC에 traceId 저장
-      MDC.put(TRACE_ID_KEY, traceId);
+      MDC.put(TraceIdConstants.TRACE_ID_KEY, traceId);
 
       // 3. 응답 헤더에도 traceId 포함
       response.setHeader(TRACE_ID_HEADER, traceId);
