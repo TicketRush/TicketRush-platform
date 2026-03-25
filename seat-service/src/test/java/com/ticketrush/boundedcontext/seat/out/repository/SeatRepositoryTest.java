@@ -1,6 +1,7 @@
 package com.ticketrush.boundedcontext.seat.out.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.tuple;
 
 import com.ticketrush.boundedcontext.seat.domain.dto.response.SeatLayoutResponse;
 import com.ticketrush.boundedcontext.seat.domain.entity.Seat;
@@ -18,7 +19,7 @@ class SeatRepositoryTest {
 
   @Autowired private SeatRepository seatRepository;
 
-  @Autowired private TestEntityManager entityManager; // 테스트용 데이터 조작 도구
+  @Autowired private TestEntityManager entityManager;
 
   @Test
   @DisplayName("Seat과 SeatLayout을 조인하여 해당하는 공연의 DTO만 조회한다")
@@ -29,11 +30,11 @@ class SeatRepositoryTest {
 
     // 1. SeatLayout 데이터 세팅
     SeatLayout layout1 =
-        SeatLayout.builder().performanceId(targetPerformanceId).rowNo("A").colNo(1).build();
+      SeatLayout.builder().performanceId(targetPerformanceId).rowNo("A").colNo(1).build();
     SeatLayout layout2 =
-        SeatLayout.builder().performanceId(targetPerformanceId).rowNo("A").colNo(2).build();
+      SeatLayout.builder().performanceId(targetPerformanceId).rowNo("A").colNo(2).build();
     SeatLayout otherLayout =
-        SeatLayout.builder().performanceId(otherPerformanceId).rowNo("B").colNo(1).build();
+      SeatLayout.builder().performanceId(otherPerformanceId).rowNo("B").colNo(1).build();
 
     layout1 = entityManager.persist(layout1);
     layout2 = entityManager.persist(layout2);
@@ -41,49 +42,51 @@ class SeatRepositoryTest {
 
     // 2. Seat 데이터 세팅
     Seat seat1 =
-        Seat.builder()
-            .seatLayoutId(layout1.getId())
-            .performanceId(targetPerformanceId)
-            .seatNumber("A1")
-            .seatStatus(SeatStatus.AVAILABLE)
-            .build();
+      Seat.builder()
+        .seatLayoutId(layout1.getId())
+        .performanceId(targetPerformanceId)
+        .seatNumber("A1")
+        .seatStatus(SeatStatus.AVAILABLE)
+        .build();
     Seat seat2 =
-        Seat.builder()
-            .seatLayoutId(layout2.getId())
-            .performanceId(targetPerformanceId)
-            .seatNumber("A2")
-            .seatStatus(SeatStatus.AVAILABLE)
-            .build();
+      Seat.builder()
+        .seatLayoutId(layout2.getId())
+        .performanceId(targetPerformanceId)
+        .seatNumber("A2")
+        .seatStatus(SeatStatus.AVAILABLE)
+        .build();
     Seat otherSeat =
-        Seat.builder()
-            .seatLayoutId(otherLayout.getId())
-            .performanceId(otherPerformanceId)
-            .seatNumber("B1")
-            .seatStatus(SeatStatus.AVAILABLE)
-            .build();
+      Seat.builder()
+        .seatLayoutId(otherLayout.getId())
+        .performanceId(otherPerformanceId)
+        .seatNumber("B1")
+        .seatStatus(SeatStatus.AVAILABLE)
+        .build();
 
     entityManager.persist(seat1);
     entityManager.persist(seat2);
     entityManager.persist(otherSeat);
 
-    // DB에 쿼리 반영 후 1차 캐시 초기화 (실제 조회 환경과 동일하게 맞춤)
+    // DB에 쿼리 반영 후 1차 캐시 초기화
     entityManager.flush();
     entityManager.clear();
 
     // when
     List<SeatLayoutResponse> result =
-        seatRepository.findSeatLayoutsByPerformanceId(targetPerformanceId);
+      seatRepository.findSeatLayoutsByPerformanceId(targetPerformanceId);
 
     // then
-    assertThat(result).hasSize(2); // 다른 공연(otherPerformanceId)의 데이터는 조회되지 않아야 함
-
-    // 데이터 검증 (순서가 보장되지 않을 수 있으므로 filter로 확인)
-    SeatLayoutResponse response1 =
-        result.stream()
-            .filter(r -> r.rowNo().equals("A") && r.colNo() == 1)
-            .findFirst()
-            .orElseThrow();
-    assertThat(response1.seatId()).isEqualTo(seat1.getId());
-    assertThat(response1.seatLayoutId()).isEqualTo(layout1.getId());
+    assertThat(result)
+      .hasSize(2)
+      .extracting(
+        SeatLayoutResponse::seatId,
+        SeatLayoutResponse::seatLayoutId,
+        SeatLayoutResponse::rowNo,
+        SeatLayoutResponse::colNo
+      )
+      .containsExactlyInAnyOrder(
+        tuple(seat1.getId(), layout1.getId(), "A", 1),
+        tuple(seat2.getId(), layout2.getId(), "A", 2)
+      );
   }
 }
