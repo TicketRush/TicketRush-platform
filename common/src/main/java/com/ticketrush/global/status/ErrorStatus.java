@@ -15,7 +15,7 @@ public enum ErrorStatus {
   FORBIDDEN(HttpStatus.FORBIDDEN, "COMMON_403", "금지된 요청입니다."),
   NOT_FOUND(HttpStatus.NOT_FOUND, "COMMON_404", "페이지를 찾을 수 없습니다."),
   // 입력값 검증 관련 에러
-  VALIDATION_ERROR(HttpStatus.BAD_REQUEST, "VALID_401", "입력값이 올바르지 않습니다.");
+  VALIDATION_ERROR(HttpStatus.BAD_REQUEST, "VALID_400", "입력값이 올바르지 않습니다.");
 
   private final HttpStatus httpStatus;
   private final String code;
