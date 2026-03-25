@@ -2,6 +2,8 @@ package com.ticketrush.boundedcontext.seat.in.api.v1;
 
 import com.ticketrush.boundedcontext.seat.app.facade.SeatFacade;
 import com.ticketrush.boundedcontext.seat.domain.dto.response.SeatLayoutResponse;
+import com.ticketrush.global.response.ApiResponse;
+import com.ticketrush.global.status.SuccessStatus;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -18,8 +20,9 @@ public class SeatController {
   private final SeatFacade seatFacade;
 
   @GetMapping("/{performanceId}/seat-layouts")
-  public ResponseEntity<List<SeatLayoutResponse>> getSeatLayouts(@PathVariable Long performanceId) {
+  public ResponseEntity<ApiResponse<List<SeatLayoutResponse>>> getSeatLayouts(
+      @PathVariable Long performanceId) {
     List<SeatLayoutResponse> response = seatFacade.getPerformanceSeatLayouts(performanceId);
-    return ResponseEntity.ok(response);
+    return ApiResponse.onSuccess(SuccessStatus.OK, response);
   }
 }
