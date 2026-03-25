@@ -21,13 +21,12 @@ public class TraceIdFilter extends OncePerRequestFilter {
 
   private static final String TRACE_ID_HEADER = "X-Trace-Id";
   private static final int MAX_TRACE_ID_LENGTH = 100;
-  private static final Pattern TRACE_ID_PATTERN =
-    Pattern.compile("^[a-zA-Z0-9_-]{1,100}$");
+  private static final Pattern TRACE_ID_PATTERN = Pattern.compile("^[a-zA-Z0-9_-]{1,100}$");
 
   @Override
   protected void doFilterInternal(
-    HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-    throws ServletException, IOException {
+      HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+      throws ServletException, IOException {
 
     try {
       // 1. HTTP 헤더에서 traceId 추출 (없으면 생성)
