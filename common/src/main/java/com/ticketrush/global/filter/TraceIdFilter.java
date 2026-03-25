@@ -37,8 +37,8 @@ public class TraceIdFilter extends OncePerRequestFilter {
 
       filterChain.doFilter(request, response);
     } finally {
-      // 4. 요청 처리 완료 후 MDC 정리
-      MDC.clear();
+      // 4. 요청 처리 완료 후 MDC 정리 (이 필터에서 추가한 키만 제거)
+      MDC.remove(TraceIdConstants.TRACE_ID_KEY);
     }
   }
 
