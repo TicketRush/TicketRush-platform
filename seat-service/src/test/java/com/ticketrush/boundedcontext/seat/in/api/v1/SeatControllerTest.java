@@ -37,10 +37,11 @@ class SeatControllerTest {
     mockMvc
         .perform(get("/api/v1/seat/{performanceId}/seat-layouts", performanceId))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.size()").value(2))
-        .andExpect(jsonPath("$[0].seatId").value(1L))
-        .andExpect(jsonPath("$[0].rowNo").value("A"))
-        .andExpect(jsonPath("$[0].colNo").value(1))
-        .andExpect(jsonPath("$[1].seatId").value(2L));
+        .andExpect(jsonPath("$.isSuccess").value(true))
+        .andExpect(jsonPath("$.result.length()").value(2))
+        .andExpect(jsonPath("$.result[0].seatId").value(1))
+        .andExpect(jsonPath("$.result[0].rowNo").value("A"))
+        .andExpect(jsonPath("$.result[0].colNo").value(1))
+        .andExpect(jsonPath("$.result[1].seatId").value(2));
   }
 }
