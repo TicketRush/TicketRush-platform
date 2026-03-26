@@ -8,3 +8,5 @@ spring:
     hibernate:
       ddl-auto: ${SPRING_JPA_HIBERNATE_DDL_AUTO:update}
     open-in-view: false
+  kafka:
+    bootstrap-servers: localhost:29092
