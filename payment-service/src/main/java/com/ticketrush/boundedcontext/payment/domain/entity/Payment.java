@@ -45,7 +45,11 @@ public class Payment extends AutoIdBaseEntity {
 
   @Builder
   private Payment(
-      Booking booking, PaymentProvider provider, Long amount, PaymentStatus status, LocalDateTime paidAt) {
+      Booking booking,
+      PaymentProvider provider,
+      Long amount,
+      PaymentStatus status,
+      LocalDateTime paidAt) {
     this.booking = booking;
     this.provider = provider;
     this.amount = amount;
