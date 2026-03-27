@@ -31,8 +31,7 @@ public class GlobalExceptionHandler {
     String errorMessage =
         e.getConstraintViolations().stream()
             .map(v -> v.getPropertyPath() + ": " + v.getMessage())
-            .findFirst()
-            .orElse("입력값이 올바르지 않습니다.");
+            .collect(Collectors.joining(", "));
 
     log.warn("Constraint validation failed: {}", errorMessage);
 
