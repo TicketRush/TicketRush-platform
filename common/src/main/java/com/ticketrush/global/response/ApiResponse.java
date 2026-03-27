@@ -45,18 +45,18 @@ public class ApiResponse<T> {
   }
 
   // 실패한 경우 응답 생성
-  public static ResponseEntity<ApiResponse<Void>> onFailure(ErrorStatus error) {
+  public static ResponseEntity<ApiResponse<?>> onFailure(ErrorStatus error) {
     return new ResponseEntity<>(
         new ApiResponse<>(false, error.getCode(), error.getMessage(), null), error.getHttpStatus());
   }
 
-  public static ResponseEntity<ApiResponse<Void>> onFailure(ErrorStatus error, String message) {
+  public static ResponseEntity<ApiResponse<?>> onFailure(ErrorStatus error, String message) {
     return new ResponseEntity<>(
         new ApiResponse<>(false, error.getCode(), error.getMessage(message), null),
         error.getHttpStatus());
   }
 
-  public static ResponseEntity<ApiResponse<Object>> onFailure(ErrorStatus error, Object data) {
+  public static ResponseEntity<ApiResponse<?>> onFailure(ErrorStatus error, Object data) {
     return new ResponseEntity<>(
         new ApiResponse<>(false, error.getCode(), error.getMessage(), data), error.getHttpStatus());
   }
