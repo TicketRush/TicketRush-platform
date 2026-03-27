@@ -33,7 +33,7 @@ public class Refund extends AutoIdBaseEntity {
   private Long price; // 환불 금액
 
   @Enumerated(EnumType.STRING)
-  @Column(nullable = false)
+  @Column(name = "status", length = 20, nullable = true)
   private RefundStatus status; // 환불 상태 (PENDING, COMPLETED 등)
 
   private LocalDateTime confirmedAt; // {동사}edAt 규칙 준수 [cite: 65]
