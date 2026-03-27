@@ -19,7 +19,7 @@ public class JsonConverter {
     } catch (Exception e) {
       String typeName = (value != null) ? value.getClass().getName() : "null";
       log.error("Failed to serialize value of type: {}", typeName, e);
-      throw new SerializationException("failed serialization error", e);
+      throw new SerializationException(e);
     }
   }
 
@@ -33,7 +33,7 @@ public class JsonConverter {
           type.getName(),
           payloadLength,
           e);
-      throw new DeserializationException("failed deserialization error", e);
+      throw new DeserializationException(e);
     }
   }
 
@@ -47,7 +47,7 @@ public class JsonConverter {
           type.getType().getTypeName(),
           payloadLength,
           e);
-      throw new DeserializationException("failed deserialization error", e);
+      throw new DeserializationException(e);
     }
   }
 }

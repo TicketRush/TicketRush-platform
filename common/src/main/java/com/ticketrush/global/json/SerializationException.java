@@ -1,7 +1,10 @@
 package com.ticketrush.global.json;
 
-public class SerializationException extends RuntimeException {
-  public SerializationException(String message, Throwable cause) {
-    super(message, cause);
+import com.ticketrush.global.exception.BusinessException;
+import com.ticketrush.global.status.ErrorStatus;
+
+public class SerializationException extends BusinessException {
+  public SerializationException(Throwable cause) {
+    super(ErrorStatus.JSON_PROCESSING_ERROR, cause);
   }
 }
