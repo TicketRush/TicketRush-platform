@@ -1,5 +1,7 @@
 package com.ticketrush.global.request;
 
+import static com.ticketrush.global.constants.PaginationConstants.DEFAULT_PAGE_SIZE;
+
 public record OffsetPageRequest(Integer page, Integer size) implements PaginationRequest {
 
   public OffsetPageRequest {
@@ -7,7 +9,7 @@ public record OffsetPageRequest(Integer page, Integer size) implements Paginatio
       page = 0;
     }
     if (size == null || size < 1) {
-      size = 10;
+      size = DEFAULT_PAGE_SIZE;
     }
   }
 }
