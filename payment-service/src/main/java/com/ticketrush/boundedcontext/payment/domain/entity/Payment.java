@@ -1,6 +1,7 @@
 package com.ticketrush.boundedcontext.payment.domain.entity;
 
 import com.ticketrush.boundedcontext.booking.domain.entity.Booking;
+import com.ticketrush.boundedcontext.payment.domain.types.PaymentProvider;
 import com.ticketrush.boundedcontext.payment.domain.types.PaymentStatus;
 import com.ticketrush.global.jpa.entity.AutoIdBaseEntity;
 import jakarta.persistence.AttributeOverride;
@@ -10,7 +11,7 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import lombok.AccessLevel;
@@ -25,12 +26,13 @@ import lombok.NoArgsConstructor;
 @AttributeOverride(name = "id", column = @Column(name = "payment_id"))
 public class Payment extends AutoIdBaseEntity {
 
-  @OneToOne(fetch = FetchType.LAZY)
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "booking_id", nullable = false)
   private Booking booking;
 
-  @Column(nullable = false, length = 50)
-  private String provider; // 결제 수단 (예: KAKAO, NAVER)
+  @Enumerated(EnumType.STRING)
+  @Column(nullable = false)
+  private PaymentProvider provider; // 결제 수단 (예: KAKAO, NAVER)
 
   @Column(nullable = false)
   private Long amount; // 결제 금액
@@ -43,7 +45,7 @@ public class Payment extends AutoIdBaseEntity {
 
   @Builder
   private Payment(
-      Booking booking, String provider, Long amount, PaymentStatus status, LocalDateTime paidAt) {
+      Booking booking, PaymentProvider provider, Long amount, PaymentStatus status, LocalDateTime paidAt) {
     this.booking = booking;
     this.provider = provider;
     this.amount = amount;
