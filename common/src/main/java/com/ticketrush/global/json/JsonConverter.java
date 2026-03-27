@@ -1,10 +1,10 @@
 package com.ticketrush.global.json;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.ObjectMapper;
 
 @Slf4j
 @Component
@@ -17,7 +17,8 @@ public class JsonConverter {
     try {
       return objectMapper.writeValueAsString(value);
     } catch (Exception e) {
-      log.error("Failed to serialize value: {}", value, e);
+      String typeName = (value != null) ? value.getClass().getName() : "null";
+      log.error("Failed to serialize value of type: {}", typeName, e);
       throw new SerializationException("failed serialization error", e);
     }
   }
@@ -26,7 +27,12 @@ public class JsonConverter {
     try {
       return objectMapper.readValue(payload, type);
     } catch (Exception e) {
-      log.error("Failed to deserialize payload: {}", payload, e);
+      int payloadLength = (payload != null) ? payload.length() : 0;
+      log.error(
+          "Failed to deserialize payload. Expected Type: {}, Payload Length: {}",
+          type.getName(),
+          payloadLength,
+          e);
       throw new DeserializationException("failed deserialization error", e);
     }
   }
@@ -35,7 +41,12 @@ public class JsonConverter {
     try {
       return objectMapper.readValue(payload, type);
     } catch (Exception e) {
-      log.error("Failed to deserialize payload: {}", payload, e);
+      int payloadLength = (payload != null) ? payload.length() : 0;
+      log.error(
+          "Failed to deserialize payload. Expected Type Reference: {}, Payload Length: {}",
+          type.getType().getTypeName(),
+          payloadLength,
+          e);
       throw new DeserializationException("failed deserialization error", e);
     }
   }
