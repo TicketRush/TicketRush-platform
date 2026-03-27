@@ -6,6 +6,7 @@ import com.ticketrush.global.event.EventUtils;
 import com.ticketrush.global.status.ErrorStatus;
 import com.ticketrush.global.status.SuccessStatus;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
 import lombok.Getter;
 import org.springframework.data.domain.Page;
@@ -75,6 +76,8 @@ public class ApiResponse<T> {
   // 성공 - 커서 기반(무한 스크롤) 페이징 포함
   public static <T> ResponseEntity<ApiResponse<List<T>>> onSuccess(
       SuccessStatus status, Slice<T> slice, Function<T, Long> cursorExtractor) {
+
+    Objects.requireNonNull(cursorExtractor, "cursorExtractor must not be null");
 
     Long nextCursor = null;
     List<T> content = slice.getContent();
