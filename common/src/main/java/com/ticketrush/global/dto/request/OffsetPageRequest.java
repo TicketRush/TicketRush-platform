@@ -1,4 +1,4 @@
-package com.ticketrush.global.request;
+package com.ticketrush.global.dto.request;
 
 import static com.ticketrush.global.constants.PaginationConstants.DEFAULT_PAGE_SIZE;
 

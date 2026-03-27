@@ -1,4 +1,4 @@
-package com.ticketrush.global.response;
+package com.ticketrush.global.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;

@@ -1,3 +1,3 @@
-package com.ticketrush.global.response;
+package com.ticketrush.global.dto.response;
 
 public sealed interface PaginationInfo permits PageInfo, CursorInfo {}
