@@ -5,6 +5,7 @@ import com.ticketrush.global.status.ErrorStatus;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
 import java.nio.file.AccessDeniedException;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.convert.ConversionFailedException;
 import org.springframework.http.ResponseEntity;
@@ -29,9 +30,11 @@ public class GlobalExceptionHandler {
 
     String errorMessage =
         e.getConstraintViolations().stream()
-            .map(constraintViolation -> constraintViolation.getMessage())
+            .map(v -> v.getPropertyPath() + ": " + v.getMessage())
             .findFirst()
-            .orElse("ConstraintViolationException 추출 도중 에러 발생");
+            .orElse("입력값이 올바르지 않습니다.");
+
+    log.warn("Constraint validation failed: {}", errorMessage);
 
     return ApiResponse.onFailure(ErrorStatus.VALIDATION_ERROR, errorMessage);
   }
@@ -41,7 +44,13 @@ public class GlobalExceptionHandler {
       MethodArgumentNotValidException e) {
     storeException(e);
 
-    String errorMessage = e.getBindingResult().getFieldError().getDefaultMessage();
+    String errorMessage =
+        e.getBindingResult().getFieldErrors().stream()
+            .map(error -> error.getField() + ": " + error.getDefaultMessage())
+            .collect(Collectors.joining(", "));
+
+    log.warn("Validation failed: {}", errorMessage);
+
     return ApiResponse.onFailure(ErrorStatus.VALIDATION_ERROR, errorMessage);
   }
 
@@ -59,8 +68,9 @@ public class GlobalExceptionHandler {
     return ApiResponse.onFailure((ErrorStatus.INTERNAL_SERVER_ERROR));
   }
 
-  @ExceptionHandler(GeneralException.class)
-  public ResponseEntity<ApiResponse<?>> handleGeneralException(GeneralException e) {
+  @ExceptionHandler(BusinessException.class)
+  public ResponseEntity<ApiResponse<?>> handleGeneralException(BusinessException e) {
+    log.warn("Business exception: {}", e.getMessage());
     storeException(e);
 
     if (e.getData() != null) {
