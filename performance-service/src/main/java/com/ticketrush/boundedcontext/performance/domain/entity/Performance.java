@@ -1,5 +1,6 @@
 package com.ticketrush.boundedcontext.performance.domain.entity;
 
+import com.ticketrush.boundedcontext.performance.domain.dto.request.PerformanceCreateRequest;
 import com.ticketrush.boundedcontext.performance.domain.types.Genre;
 import com.ticketrush.boundedcontext.performance.domain.types.PerformanceStatus;
 import com.ticketrush.global.jpa.entity.AutoIdBaseEntity;
@@ -77,6 +78,26 @@ public class Performance extends AutoIdBaseEntity {
       joinColumns = @JoinColumn(name = "performance_id"))
   @Column(name = "facility_name")
   private List<String> facilities;
+
+  public static Performance create(PerformanceCreateRequest request) {
+    return Performance.builder()
+        .title(request.title())
+        .performer(request.performer())
+        .genre(request.genre())
+        .description(request.description())
+        .showDate(request.showDate())
+        .showTime(request.showTime())
+        .durationMinutes(request.durationMinutes())
+        .price(request.price())
+        .totalSeats(request.totalSeats())
+        .address(request.address())
+        .performanceStatus(PerformanceStatus.UPCOMING)
+        .image3dUrl(request.image3dUrl())
+        .imageMainUrl(request.imageMainUrl())
+        .imageGalleryUrls(request.imageGalleryUrls())
+        .facilities(request.facilities())
+        .build();
+  }
 
   @Builder
   private Performance(
