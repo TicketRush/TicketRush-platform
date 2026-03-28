@@ -7,6 +7,7 @@ import com.ticketrush.global.eventpublisher.topic.KafkaResolver;
 import com.ticketrush.global.json.JsonConverter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.support.MessageBuilder;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
+@ConditionalOnExpression("'${app.event-publisher.type}' == 'kafka'")
 @RequiredArgsConstructor
 public class KafkaDomainEventPublisher implements EventPublisher {
 
