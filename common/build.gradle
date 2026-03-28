@@ -61,6 +61,9 @@ dependencies {
 	// Kafka
 	implementation 'org.springframework.boot:spring-boot-starter-kafka'
 	testImplementation("org.springframework.boot:spring-boot-starter-kafka-test")
+
+	// validation
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
 }
 
 dependencyManagement {
