@@ -1,7 +1,10 @@
 package com.ticketrush.global.json;
 
-public class DeserializationException extends RuntimeException {
-  public DeserializationException(String message, Throwable cause) {
-    super(message, cause);
+import com.ticketrush.global.exception.BusinessException;
+import com.ticketrush.global.status.ErrorStatus;
+
+public class DeserializationException extends BusinessException {
+  public DeserializationException(Throwable cause) {
+    super(ErrorStatus.JSON_PROCESSING_ERROR, cause);
   }
 }
