@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.ticketrush.boundedcontext.performance.app.usecase.PerformanceCreateUseCase;
 import com.ticketrush.boundedcontext.performance.domain.dto.request.PerformanceCreateRequest;
+import com.ticketrush.boundedcontext.performance.domain.dto.response.PerformanceCreateResponse;
 import com.ticketrush.boundedcontext.performance.domain.types.Genre;
 import com.ticketrush.boundedcontext.performance.out.repository.PerformanceRepository;
 import java.time.LocalDate;
@@ -13,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-@SpringBootTest(properties = "spring.main.allow-bean-definition-overriding=true")
+@SpringBootTest
 @Transactional
 class PerformanceCreateTest {
 
@@ -23,7 +24,6 @@ class PerformanceCreateTest {
 
   @Test
   void createPerformanceTest() {
-    // 1. Given (준비)
     PerformanceCreateRequest request =
         PerformanceCreateRequest.builder()
             .title("콘서트")
@@ -38,11 +38,20 @@ class PerformanceCreateTest {
             .address("서울")
             .build();
 
-    Long savedId = performanceCreateUseCase.execute(request);
+    PerformanceCreateResponse response = performanceCreateUseCase.execute(request);
 
-    assertThat(savedId).isNotNull();
-    assertThat(performanceRepository.findById(savedId)).isPresent();
+    assertThat(response).isNotNull();
+    assertThat(response.performanceId()).isNotNull();
 
-    System.out.println("테스트 성공! 생성된 공연 ID: " + savedId);
+    var savedPerformance =
+        performanceRepository
+            .findById(response.performanceId())
+            .orElseThrow(() -> new AssertionError("저장된 공연을 찾을 수 없습니다."));
+
+    assertThat(savedPerformance.getTitle()).isEqualTo(request.title());
+    assertThat(savedPerformance.getPerformer()).isEqualTo(request.performer());
+    assertThat(savedPerformance.getGenre()).isEqualTo(request.genre());
+    assertThat(savedPerformance.getPrice()).isEqualTo(request.price());
+    assertThat(savedPerformance.getTotalSeats()).isEqualTo(request.totalSeats());
   }
 }

@@ -13,8 +13,6 @@ public class PerformanceFacade {
   private final PerformanceCreateUseCase performanceCreateUseCase;
 
   public PerformanceCreateResponse createPerformance(PerformanceCreateRequest request) {
-    // UseCase의 execute를 호출하여 ID를 받고 응답 객체로 변환
-    Long performanceId = performanceCreateUseCase.execute(request);
-    return new PerformanceCreateResponse(performanceId);
+    return performanceCreateUseCase.execute(request);
   }
 }
