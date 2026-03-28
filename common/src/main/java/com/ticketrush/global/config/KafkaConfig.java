@@ -110,13 +110,25 @@ public class KafkaConfig {
         new DeadLetterPublishingRecoverer(
             kafkaTemplate(),
             (record, ex) -> {
+              // 1. 안전한 메타데이터 추출을 위해 기본값 세팅
+              String eventId = "UNKNOWN";
+              String eventType = "UNKNOWN";
+
+              // 2. record.value()가 DomainEventEnvelope 타입인지 확인 후 메타데이터만 추출
+              if (record.value() instanceof DomainEventEnvelope envelope) {
+                eventId = envelope.eventId();
+                eventType = envelope.eventType();
+              }
+
+              // 3. 민감할 수 있는 value 전체 대신 메타데이터 위주로 로깅
               log.error(
-                  "[DLT] topic={} partition={} offset={} key={} value={}",
+                  "[DLT] topic={} partition={} offset={} key={} eventType={} eventId={}",
                   record.topic(),
                   record.partition(),
                   record.offset(),
                   record.key(),
-                  record.value(),
+                  eventType,
+                  eventId,
                   ex);
 
               return new TopicPartition(toDltTopic(record.topic()), record.partition());
