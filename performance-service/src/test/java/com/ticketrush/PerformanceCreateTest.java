@@ -1,4 +1,4 @@
-package com.ticketrush.boundedcontext.performance;
+package com.ticketrush;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

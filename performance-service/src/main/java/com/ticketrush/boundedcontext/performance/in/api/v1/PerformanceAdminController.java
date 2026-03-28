@@ -19,7 +19,7 @@ public class PerformanceAdminController {
 
   private final PerformanceFacade performanceFacade;
 
-  @PostMapping("/")
+  @PostMapping
   public ResponseEntity<ApiResponse<PerformanceCreateResponse>> createPerformance(
       @RequestBody PerformanceCreateRequest request) {
 
