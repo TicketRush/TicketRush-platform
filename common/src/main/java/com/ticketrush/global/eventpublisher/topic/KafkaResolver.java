@@ -1,6 +1,5 @@
 package com.ticketrush.global.eventpublisher.topic;
 
-import java.util.UUID;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.stereotype.Component;
 
@@ -23,9 +22,7 @@ public class KafkaResolver {
       // 추후 각 모듈별 이벤트 추가
 
       // default
-      default ->
-          KafkaPublishTarget.of(
-              UUID.randomUUID().toString(), "unexpected-events-topic", "Unknown", "unexpected-key");
+      default -> KafkaPublishTarget.of("unexpected-events-topic", "Unknown", "unexpected-key");
     };
   }
 }
