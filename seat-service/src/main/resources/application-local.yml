@@ -10,3 +10,6 @@ spring:
     open-in-view: false
   kafka:
     bootstrap-servers: localhost:29092
+app:
+  event-publisher:
+    type: kafka
