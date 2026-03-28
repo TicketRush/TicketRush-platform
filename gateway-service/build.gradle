@@ -45,6 +45,9 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-security-test'
 	testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+	// gateway에 swagger ui 추가
+	implementation 'org.springdoc:springdoc-openapi-starter-webflux-ui:2.0.2'
 }
 
 dependencyManagement {
