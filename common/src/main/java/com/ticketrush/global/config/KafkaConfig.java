@@ -39,13 +39,27 @@ public class KafkaConfig {
 
   private static final String DLT_SUFFIX = ".DLT";
   private static final String TRUSTED_EVENT_PACKAGE = "com.ticketrush.*";
+  private static final String ACKS_ALL = "all";
+  private static final String OFFSET_RESET_LATEST = "latest";
+  private static final String UNKNOWN = "UNKNOWN";
+
   private static final int PRODUCER_RETRIES = 3;
   private static final int MAX_POLL_RECORDS = 20;
+  private static final int MAX_IN_FLIGHT_REQUESTS = 5;
+  private static final int LINGER_MS = 5;
+  private static final int BACKOFF_MAX_RETRIES = 5;
+
   private static final long FETCH_MAX_WAIT_MS = 500L;
   private static final long MAX_POLL_INTERVAL_MS = 300_000L;
   private static final long DELIVERY_TIMEOUT_MS = 120_000L;
-  private static final int MAX_IN_FLIGHT_REQUESTS = 5;
-  private static final int LINGER_MS = 5;
+  private static final long BACKOFF_INITIAL_INTERVAL_MS = 1_000L;
+  private static final long BACKOFF_MAX_INTERVAL_MS = 60_000L;
+
+  private static final double BACKOFF_MULTIPLIER = 2.0;
+
+  private static final boolean ENABLE_IDEMPOTENCE = true;
+  private static final boolean ENABLE_AUTO_COMMIT = false;
+  private static final boolean USE_TYPE_INFO_HEADERS = true;
 
   @Value("${spring.kafka.bootstrap-servers:localhost:29092}")
   private String bootstrapServers;
@@ -56,13 +70,13 @@ public class KafkaConfig {
     configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
     configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
     configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JacksonJsonSerializer.class);
-    configProps.put(ProducerConfig.ACKS_CONFIG, "all");
+    configProps.put(ProducerConfig.ACKS_CONFIG, ACKS_ALL);
     configProps.put(ProducerConfig.RETRIES_CONFIG, PRODUCER_RETRIES);
     configProps.put(ProducerConfig.DELIVERY_TIMEOUT_MS_CONFIG, DELIVERY_TIMEOUT_MS);
-    configProps.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, true);
+    configProps.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, ENABLE_IDEMPOTENCE);
     configProps.put(ProducerConfig.MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION, MAX_IN_FLIGHT_REQUESTS);
     configProps.put(ProducerConfig.LINGER_MS_CONFIG, LINGER_MS);
-    configProps.put(JacksonJsonSerializer.ADD_TYPE_INFO_HEADERS, true);
+    configProps.put(JacksonJsonSerializer.ADD_TYPE_INFO_HEADERS, USE_TYPE_INFO_HEADERS);
 
     return new DefaultKafkaProducerFactory<>(configProps);
   }
@@ -86,10 +100,10 @@ public class KafkaConfig {
         ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS, JacksonJsonDeserializer.class);
 
     configProps.put(JacksonJsonDeserializer.TRUSTED_PACKAGES, TRUSTED_EVENT_PACKAGE);
-    configProps.put(JacksonJsonDeserializer.USE_TYPE_INFO_HEADERS, true);
+    configProps.put(JacksonJsonDeserializer.USE_TYPE_INFO_HEADERS, USE_TYPE_INFO_HEADERS);
 
-    configProps.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest");
-    configProps.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);
+    configProps.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, OFFSET_RESET_LATEST);
+    configProps.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, ENABLE_AUTO_COMMIT);
     configProps.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, MAX_POLL_RECORDS);
     configProps.put(ConsumerConfig.FETCH_MAX_WAIT_MS_CONFIG, FETCH_MAX_WAIT_MS);
     configProps.put(ConsumerConfig.MAX_POLL_INTERVAL_MS_CONFIG, MAX_POLL_INTERVAL_MS);
@@ -110,17 +124,14 @@ public class KafkaConfig {
         new DeadLetterPublishingRecoverer(
             kafkaTemplate(),
             (record, ex) -> {
-              // 1. 안전한 메타데이터 추출을 위해 기본값 세팅
-              String eventId = "UNKNOWN";
-              String eventType = "UNKNOWN";
+              String eventId = UNKNOWN;
+              String eventType = UNKNOWN;
 
-              // 2. record.value()가 DomainEventEnvelope 타입인지 확인 후 메타데이터만 추출
               if (record.value() instanceof DomainEventEnvelope envelope) {
                 eventId = envelope.eventId();
                 eventType = envelope.eventType();
               }
 
-              // 3. 민감할 수 있는 value 전체 대신 메타데이터 위주로 로깅
               log.error(
                   "[DLT] topic={} partition={} offset={} key={} eventType={} eventId={}",
                   record.topic(),
@@ -134,10 +145,11 @@ public class KafkaConfig {
               return new TopicPartition(toDltTopic(record.topic()), record.partition());
             });
 
-    ExponentialBackOffWithMaxRetries backOff = new ExponentialBackOffWithMaxRetries(5);
-    backOff.setInitialInterval(1_000L);
-    backOff.setMultiplier(2.0);
-    backOff.setMaxInterval(60_000L);
+    ExponentialBackOffWithMaxRetries backOff =
+        new ExponentialBackOffWithMaxRetries(BACKOFF_MAX_RETRIES);
+    backOff.setInitialInterval(BACKOFF_INITIAL_INTERVAL_MS);
+    backOff.setMultiplier(BACKOFF_MULTIPLIER);
+    backOff.setMaxInterval(BACKOFF_MAX_INTERVAL_MS);
 
     DefaultErrorHandler errorHandler = new DefaultErrorHandler(recoverer, backOff);
     errorHandler.addNotRetryableExceptions(
