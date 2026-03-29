@@ -87,6 +87,62 @@ class PerformanceValidationTest {
 
   @Test
   @WithMockUser
+  @DisplayName("장르를 선택하지 않으면 에러가 발생한다")
+  void genreNotNullValidationFail() throws Exception {
+    PerformanceCreateRequest request =
+        PerformanceCreateRequest.builder()
+            .title("정상 제목")
+            .performer("정상 가수")
+            .genre(null)
+            .showDate(LocalDate.now())
+            .showTime(LocalTime.of(19, 0))
+            .durationMinutes(120)
+            .price(50000L)
+            .totalSeats(100)
+            .address("서울시")
+            .imageMainUrl("https://image.png")
+            .build();
+
+    mockMvc
+        .perform(
+            post("/api/v1/performance")
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.code").value("VALID_400"));
+  }
+
+  @Test
+  @WithMockUser
+  @DisplayName("공연장 주소가 비어있으면 에러가 발생한다")
+  void addressNotBlankValidationFail() throws Exception {
+    PerformanceCreateRequest request =
+        PerformanceCreateRequest.builder()
+            .title("정상 제목")
+            .performer("정상 가수")
+            .genre(Genre.CONCERT)
+            .showDate(LocalDate.now())
+            .showTime(LocalTime.of(19, 0))
+            .durationMinutes(120)
+            .price(50000L)
+            .totalSeats(100)
+            .address("")
+            .imageMainUrl("https://image.png")
+            .build();
+
+    mockMvc
+        .perform(
+            post("/api/v1/performance")
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.code").value("VALID_400"));
+  }
+
+  @Test
+  @WithMockUser
   @DisplayName("모든 값이 올바르면 201 응답을 반환한다")
   void createPerformanceSuccess() throws Exception {
     PerformanceCreateRequest request =
