@@ -58,7 +58,7 @@
   </springProfile>
 
   <springProfile name="prod">
-    <root level="WARN">
+    <root level="INFO">
       <appender-ref ref="JSON_FILE"/>
     </root>
   </springProfile>
