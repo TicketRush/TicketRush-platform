@@ -9,6 +9,7 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -54,9 +55,14 @@ public class ApiLoggingAspect {
       Object result = joinPoint.proceed();
       long elapsedTime = System.currentTimeMillis() - startTime;
 
-      // 응답 상태 코드 추출
-      HttpServletResponse response = attributes.getResponse();
-      int status = (response != null) ? response.getStatus() : 200;
+      // ResponseEntity면 거기서 status 추출, 아니면 HttpServletResponse fallback
+      int status;
+      if (result instanceof ResponseEntity<?> responseEntity) {
+        status = responseEntity.getStatusCode().value();
+      } else {
+        HttpServletResponse response = attributes.getResponse();
+        status = (response != null) ? response.getStatus() : 200;
+      }
 
       // 3. 정상 응답 로깅
       log.info(
