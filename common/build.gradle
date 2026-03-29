@@ -66,11 +66,9 @@ dependencies {
 	api('net.logstash.logback:logstash-logback-encoder:9.0') {
 		exclude group: 'tools.jackson.core', module: 'jackson-core'
 		exclude group: 'tools.jackson.core', module: 'jackson-databind'
-		exclude group: 'tools.jackson.core', module: 'jackson-annotations'
 	}
 	api 'tools.jackson.core:jackson-core:3.1.0'
 	api 'tools.jackson.core:jackson-databind:3.1.0'
-	api 'tools.jackson.core:jackson-annotations:3.1.0'
 }
 
 dependencyManagement {
