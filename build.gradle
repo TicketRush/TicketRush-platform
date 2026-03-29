@@ -11,13 +11,14 @@ allprojects {
     }
 }
 
-// 2. (필요 시) 루트 checkstyle 제외할 서브프로젝트 지정
+// 2. (선택) 루트 checkstyle 제외할 서브프로젝트 지정
 //def checkstyleExcludeProjects = ['kafka-connector'] as Set
 
 subprojects { subproject ->
     apply plugin: 'java'
     apply plugin: 'com.diffplug.spotless'
 
+    // 특정 모듈 checkstyle 제외 로직 (사용 시 활성화)
 //    if (checkstyleExcludeProjects.contains(subproject.name)) {
 //        subproject.ext.skipCheckstyle = true
 //    }
