@@ -1,6 +1,6 @@
 package com.ticketrush.global.exception;
 
-import com.ticketrush.global.response.ApiResponse;
+import com.ticketrush.global.dto.response.ApiResponse;
 import com.ticketrush.global.status.ErrorStatus;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
