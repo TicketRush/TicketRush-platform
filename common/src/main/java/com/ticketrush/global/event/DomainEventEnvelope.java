@@ -6,12 +6,11 @@ import java.util.UUID;
 public record DomainEventEnvelope(
     String eventId,
     String eventType,
-    Instant occurredAt,
+    Instant createdAt,
     String topic,
     String payload,
     String traceId) {
 
-  // 파라미터에서 topic 제거, Object를 DomainEvent로 변경
   public static DomainEventEnvelope of(DomainEvent event, String payload) {
     return new DomainEventEnvelope(
         UUID.randomUUID().toString(),
