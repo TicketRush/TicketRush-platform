@@ -50,4 +50,19 @@ public class JsonConverter {
       throw new DeserializationException(e);
     }
   }
+
+  public String serializeForLog(Object value, int maxLength) {
+    if (value == null) {
+      return "none";
+    }
+    try {
+      String serialized = objectMapper.writeValueAsString(value);
+      if (serialized.length() > maxLength) {
+        return serialized.substring(0, maxLength) + "...(truncated)";
+      }
+      return serialized;
+    } catch (Exception e) {
+      return "un-serializable object";
+    }
+  }
 }
