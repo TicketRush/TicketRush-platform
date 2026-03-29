@@ -36,9 +36,15 @@ class PerformanceValidationTest {
     PerformanceCreateRequest request =
         PerformanceCreateRequest.builder()
             .title("")
+            .performer("정상 가수")
+            .genre(Genre.CONCERT)
+            .showDate(LocalDate.now())
+            .showTime(LocalTime.of(19, 0))
+            .durationMinutes(120)
             .price(50000L)
             .totalSeats(100)
-            .showDate(LocalDate.now())
+            .address("서울시")
+            .imageMainUrl("https://image.png")
             .build();
 
     mockMvc
@@ -58,9 +64,15 @@ class PerformanceValidationTest {
     PerformanceCreateRequest request =
         PerformanceCreateRequest.builder()
             .title("정상 제목")
+            .performer("정상 가수")
+            .genre(Genre.CONCERT)
+            .showDate(LocalDate.now())
+            .showTime(LocalTime.of(19, 0))
+            .durationMinutes(120)
             .price(-1000L)
             .totalSeats(100)
-            .showDate(LocalDate.now())
+            .address("서울시")
+            .imageMainUrl("https://image.png")
             .build();
 
     mockMvc
@@ -79,14 +91,15 @@ class PerformanceValidationTest {
   void createPerformanceSuccess() throws Exception {
     PerformanceCreateRequest request =
         PerformanceCreateRequest.builder()
-            .title("콘서트")
-            .performer("가수")
+            .title("정상 공연")
+            .performer("아티스트")
             .genre(Genre.CONCERT)
             .showDate(LocalDate.now())
             .showTime(LocalTime.of(19, 0))
+            .durationMinutes(150)
             .price(50000L)
             .totalSeats(100)
-            .address("서울")
+            .address("서울시")
             .imageMainUrl("https://ticketrush.com/image.png")
             .build();
 
