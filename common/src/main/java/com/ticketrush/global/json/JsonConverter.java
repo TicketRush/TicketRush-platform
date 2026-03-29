@@ -62,7 +62,11 @@ public class JsonConverter {
       }
       return serialized;
     } catch (Exception e) {
-      return "un-serializable object";
+      String typeName = value.getClass().getName();
+      String exceptionName = e.getClass().getSimpleName();
+      log.debug(
+          "Failed to serialize value for log. type={}, exception={}", typeName, exceptionName);
+      return "un-serializable object(type=" + typeName + ", exception=" + exceptionName + ")";
     }
   }
 }
