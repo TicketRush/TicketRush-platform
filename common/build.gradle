@@ -63,12 +63,12 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 
 	// JSON 로그 생성을 위한 Logstash Encoder
-	api('net.logstash.logback:logstash-logback-encoder:9.0') {
+	implementation('net.logstash.logback:logstash-logback-encoder:9.0') {
 		exclude group: 'tools.jackson.core', module: 'jackson-core'
 		exclude group: 'tools.jackson.core', module: 'jackson-databind'
 	}
-	api 'tools.jackson.core:jackson-core:3.1.0'
-	api 'tools.jackson.core:jackson-databind:3.1.0'
+	implementation 'tools.jackson.core:jackson-core:3.1.0'
+	implementation 'tools.jackson.core:jackson-databind:3.1.0'
 }
 
 dependencyManagement {
