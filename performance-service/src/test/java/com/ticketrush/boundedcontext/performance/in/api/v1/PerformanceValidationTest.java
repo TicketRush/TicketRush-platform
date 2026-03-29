@@ -32,7 +32,7 @@ class PerformanceValidationTest {
   @Test
   @WithMockUser
   @DisplayName("공연명이 비어있으면 에러가 발생한다")
-  void title_NotBlank_Validation_Fail() throws Exception {
+  void titleNotBlankValidationFail() throws Exception {
     PerformanceCreateRequest request =
         PerformanceCreateRequest.builder()
             .title("")
@@ -54,7 +54,7 @@ class PerformanceValidationTest {
   @Test
   @WithMockUser
   @DisplayName("가격이 음수이면 에러가 발생한다")
-  void price_Positive_Validation_Fail() throws Exception {
+  void pricePositiveValidationFail() throws Exception {
     PerformanceCreateRequest request =
         PerformanceCreateRequest.builder()
             .title("정상 제목")
@@ -76,7 +76,7 @@ class PerformanceValidationTest {
   @Test
   @WithMockUser
   @DisplayName("모든 값이 올바르면 201 응답을 반환한다")
-  void create_Performance_Success() throws Exception {
+  void createPerformanceSuccess() throws Exception {
     PerformanceCreateRequest request =
         PerformanceCreateRequest.builder()
             .title("콘서트")
