@@ -44,6 +44,12 @@
     </root>
   </springProfile>
 
+  <springProfile name="test">
+    <root level="DEBUG">
+      <appender-ref ref="CONSOLE"/>
+    </root>
+  </springProfile>
+
   <springProfile name="dev">
     <root level="INFO">
       <appender-ref ref="CONSOLE"/>
