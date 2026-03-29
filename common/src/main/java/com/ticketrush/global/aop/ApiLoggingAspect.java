@@ -40,7 +40,7 @@ public class ApiLoggingAspect {
     HttpServletRequest request = attributes.getRequest();
     String method = request.getMethod();
     String requestURI = request.getRequestURI();
-    long startTime = System.currentTimeMillis();
+    long startTime = System.nanoTime();
 
     // 1. 요청 로깅
     Object[] args = joinPoint.getArgs();
@@ -53,7 +53,7 @@ public class ApiLoggingAspect {
     try {
       // 2. 실제 컨트롤러 메서드 실행
       Object result = joinPoint.proceed();
-      long elapsedTime = System.currentTimeMillis() - startTime;
+      long elapsedTime = System.nanoTime() - startTime;
 
       // ResponseEntity면 거기서 status 추출, 아니면 HttpServletResponse fallback
       int status;
@@ -75,7 +75,7 @@ public class ApiLoggingAspect {
 
     } catch (Exception e) {
       // 4. 예외 발생 시 로깅
-      long elapsedTime = System.currentTimeMillis() - startTime;
+      long elapsedTime = System.nanoTime() - startTime;
       log.error(
           "[API ERROR] [{}] {} | Time: {}ms | Exception: {}",
           method,

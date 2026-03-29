@@ -32,7 +32,7 @@ public class KafkaLoggingAspect {
     String targetClass = joinPoint.getTarget().getClass().getSimpleName();
     String methodName = joinPoint.getSignature().getName();
     Object[] args = joinPoint.getArgs();
-    long startTime = System.currentTimeMillis();
+    long startTime = System.nanoTime();
 
     // Kafka 메시지(Envelope)에서 Trace ID 추출 및 MDC 주입
     String eventTraceId = extractTraceId(args);
@@ -52,13 +52,13 @@ public class KafkaLoggingAspect {
 
     try {
       Object result = joinPoint.proceed();
-      long elapsedTime = System.currentTimeMillis() - startTime;
+      long elapsedTime = System.nanoTime() - startTime;
 
       log.info("[KAFKA CONSUME SUCCESS] {}.{} | Time: {}ms", targetClass, methodName, elapsedTime);
       return result;
 
     } catch (Exception e) {
-      long elapsedTime = System.currentTimeMillis() - startTime;
+      long elapsedTime = System.nanoTime() - startTime;
       log.error(
           "[KAFKA CONSUME FAILED] {}.{} | Time: {}ms | Error: {}",
           targetClass,
