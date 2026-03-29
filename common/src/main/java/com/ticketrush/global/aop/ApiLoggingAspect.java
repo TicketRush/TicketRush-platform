@@ -20,9 +20,10 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 @RequiredArgsConstructor
 public class ApiLoggingAspect {
 
-  private final JsonConverter jsonConverter;
-
   private static final int MAX_LOG_LENGTH = 1000;
+  private static final String NO_REQUEST_BODY = "none";
+
+  private final JsonConverter jsonConverter;
 
   @Pointcut("within(@org.springframework.web.bind.annotation.RestController *)")
   public void restControllerPointcut() {}
@@ -47,7 +48,7 @@ public class ApiLoggingAspect {
     String requestBody =
         (args != null && args.length > 0)
             ? jsonConverter.serializeForLog(args[0], MAX_LOG_LENGTH)
-            : "none";
+            : NO_REQUEST_BODY;
     log.info("[API REQUEST] [{}] {} | Payload: {}", method, requestURI, requestBody);
 
     try {
@@ -70,7 +71,8 @@ public class ApiLoggingAspect {
           method,
           requestURI,
           status,
-          elapsedTime);
+          elapsedTime / 1_000_000);
+
       return result;
 
     } catch (Exception e) {
@@ -80,7 +82,7 @@ public class ApiLoggingAspect {
           "[API ERROR] [{}] {} | Time: {}ms | Exception: {}",
           method,
           requestURI,
-          elapsedTime,
+          elapsedTime / 1_000_000,
           e.getClass().getSimpleName(),
           e);
       throw e; // GlobalExceptionHandler 처리를 위해 예외를 다시 던짐
