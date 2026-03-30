@@ -2,7 +2,6 @@ package com.ticketrush.global.aop;
 
 import com.ticketrush.global.constants.TraceIdConstants;
 import com.ticketrush.global.event.DomainEventEnvelope;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -15,7 +14,6 @@ import org.springframework.util.StringUtils;
 @Slf4j
 @Aspect
 @Component
-@RequiredArgsConstructor
 public class KafkaLoggingAspect {
 
   private static final String UNKNOWN_TRACE_ID = "Unknown";
