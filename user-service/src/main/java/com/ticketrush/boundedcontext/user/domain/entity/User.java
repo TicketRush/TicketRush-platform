@@ -24,9 +24,6 @@ public class User extends AutoIdBaseEntity {
   @Column(nullable = true, length = 100)
   private String email;
 
-  @Column(nullable = true, length = 30)
-  private String phone;
-
   @Enumerated(EnumType.STRING)
   @Column(name = "user_role", nullable = false)
   private UserRole role;
@@ -35,7 +32,6 @@ public class User extends AutoIdBaseEntity {
   public User(String name, String email, String phone, UserRole role) {
     this.name = name;
     this.email = email;
-    this.phone = phone;
     this.role = role;
   }
 }
