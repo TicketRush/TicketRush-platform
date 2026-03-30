@@ -1,7 +1,9 @@
 package com.ticketrush.boundedcontext.performance.in.api.v1;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -29,7 +31,7 @@ class PerformanceValidationTest {
 
   @MockitoBean private PerformanceFacade performanceFacade;
 
-  private final String baseUrl = "/performance";
+  private final String baseUrl = "/api/v1/performance";
 
   @Test
   @WithMockUser
@@ -55,8 +57,11 @@ class PerformanceValidationTest {
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
+        .andDo(print()) // 로그 확인용 추가
         .andExpect(status().isBadRequest())
-        .andExpect(jsonPath("$.code").value("VALID_400"));
+        .andExpect(jsonPath("$.code").value("VALID_400"))
+        .andExpect(jsonPath("$.isSuccess").value(false))
+        .andExpect(jsonPath("$.message").value(containsString("title")));
   }
 
   @Test
@@ -83,8 +88,11 @@ class PerformanceValidationTest {
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
+        .andDo(print())
         .andExpect(status().isBadRequest())
-        .andExpect(jsonPath("$.code").value("VALID_400"));
+        .andExpect(jsonPath("$.code").value("VALID_400"))
+        .andExpect(jsonPath("$.isSuccess").value(false))
+        .andExpect(jsonPath("$.message").value(containsString("price")));
   }
 
   @Test
@@ -111,8 +119,11 @@ class PerformanceValidationTest {
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
+        .andDo(print())
         .andExpect(status().isBadRequest())
-        .andExpect(jsonPath("$.code").value("VALID_400"));
+        .andExpect(jsonPath("$.code").value("VALID_400"))
+        .andExpect(jsonPath("$.isSuccess").value(false))
+        .andExpect(jsonPath("$.message").value(containsString("genre")));
   }
 
   @Test
@@ -139,8 +150,11 @@ class PerformanceValidationTest {
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
+        .andDo(print())
         .andExpect(status().isBadRequest())
-        .andExpect(jsonPath("$.code").value("VALID_400"));
+        .andExpect(jsonPath("$.code").value("VALID_400"))
+        .andExpect(jsonPath("$.isSuccess").value(false))
+        .andExpect(jsonPath("$.message").value(containsString("address")));
   }
 
   @Test
@@ -167,9 +181,13 @@ class PerformanceValidationTest {
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
+        .andDo(print())
         .andExpect(status().isBadRequest())
-        .andExpect(jsonPath("$.code").value("VALID401"))
-        .andExpect(jsonPath("$.isSuccess").value(false));
+        .andExpect(jsonPath("$.code").value("VALID_400"))
+        .andExpect(jsonPath("$.isSuccess").value(false))
+        .andExpect(jsonPath("$.message").value(containsString("title")))
+        .andExpect(jsonPath("$.message").value(containsString("price")))
+        .andExpect(jsonPath("$.message").value(containsString("address")));
   }
 
   @Test
@@ -196,13 +214,14 @@ class PerformanceValidationTest {
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
+        .andDo(print())
         .andExpect(status().isBadRequest())
-        .andExpect(jsonPath("$.code").value("VALID401"))
+        .andExpect(jsonPath("$.code").value("VALID_400"))
         .andExpect(jsonPath("$.isSuccess").value(false))
-        .andExpect(jsonPath("$.result.showDate").exists())
-        .andExpect(jsonPath("$.result.showTime").exists())
-        .andExpect(jsonPath("$.result.totalSeats").exists())
-        .andExpect(jsonPath("$.result.imageMainUrl").exists());
+        .andExpect(jsonPath("$.message").value(containsString("showDate")))
+        .andExpect(jsonPath("$.message").value(containsString("showTime")))
+        .andExpect(jsonPath("$.message").value(containsString("totalSeats")))
+        .andExpect(jsonPath("$.message").value(containsString("imageMainUrl")));
   }
 
   @Test
@@ -229,11 +248,12 @@ class PerformanceValidationTest {
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
+        .andDo(print())
         .andExpect(status().isBadRequest())
-        .andExpect(jsonPath("$.code").value("VALID401"))
+        .andExpect(jsonPath("$.code").value("VALID_400"))
         .andExpect(jsonPath("$.isSuccess").value(false))
-        .andExpect(jsonPath("$.result.title").exists())
-        .andExpect(jsonPath("$.result.address").exists());
+        .andExpect(jsonPath("$.message").value(containsString("title")))
+        .andExpect(jsonPath("$.message").value(containsString("address")));
   }
 
   @Test
