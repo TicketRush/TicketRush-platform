@@ -29,6 +29,8 @@ class PerformanceValidationTest {
 
   @MockitoBean private PerformanceFacade performanceFacade;
 
+  private final String baseUrl = "/performance";
+
   @Test
   @WithMockUser
   @DisplayName("공연명이 비어있으면 에러가 발생한다")
@@ -49,7 +51,7 @@ class PerformanceValidationTest {
 
     mockMvc
         .perform(
-            post("/api/v1/performance")
+            post(baseUrl)
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
@@ -77,7 +79,7 @@ class PerformanceValidationTest {
 
     mockMvc
         .perform(
-            post("/api/v1/performance")
+            post(baseUrl)
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
@@ -105,7 +107,7 @@ class PerformanceValidationTest {
 
     mockMvc
         .perform(
-            post("/api/v1/performance")
+            post(baseUrl)
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
@@ -133,12 +135,105 @@ class PerformanceValidationTest {
 
     mockMvc
         .perform(
-            post("/api/v1/performance")
+            post(baseUrl)
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
         .andExpect(status().isBadRequest())
         .andExpect(jsonPath("$.code").value("VALID_400"));
+  }
+
+  @Test
+  @WithMockUser
+  @DisplayName("여러 필드가 동시에 유효하지 않으면 VALID401 에러가 발생한다")
+  void complexValidationFail() throws Exception {
+    PerformanceCreateRequest request =
+        PerformanceCreateRequest.builder()
+            .title("")
+            .performer("정상 가수")
+            .genre(Genre.CONCERT)
+            .showDate(LocalDate.now())
+            .showTime(LocalTime.of(19, 0))
+            .durationMinutes(120)
+            .price(-50000L)
+            .totalSeats(100)
+            .address("")
+            .imageMainUrl("https://image.png")
+            .build();
+
+    mockMvc
+        .perform(
+            post(baseUrl)
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.code").value("VALID401"))
+        .andExpect(jsonPath("$.isSuccess").value(false));
+  }
+
+  @Test
+  @WithMockUser
+  @DisplayName("필수 필드가 누락되거나 잘못되면 VALID401 에러가 발생한다")
+  void mandatoryFieldsValidationFail() throws Exception {
+    PerformanceCreateRequest request =
+        PerformanceCreateRequest.builder()
+            .title("정상 제목")
+            .performer("정상 가수")
+            .genre(Genre.CONCERT)
+            .showDate(null)
+            .showTime(null)
+            .durationMinutes(0)
+            .price(50000L)
+            .totalSeats(-1)
+            .address("서울시")
+            .imageMainUrl("")
+            .build();
+
+    mockMvc
+        .perform(
+            post(baseUrl)
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.code").value("VALID401"))
+        .andExpect(jsonPath("$.isSuccess").value(false))
+        .andExpect(jsonPath("$.result.showDate").exists())
+        .andExpect(jsonPath("$.result.showTime").exists())
+        .andExpect(jsonPath("$.result.totalSeats").exists())
+        .andExpect(jsonPath("$.result.imageMainUrl").exists());
+  }
+
+  @Test
+  @WithMockUser
+  @DisplayName("필수 문자열 필드에 공백(\" \")만 입력되면 VALID401 에러가 발생한다")
+  void whiteSpaceValidationFail() throws Exception {
+    PerformanceCreateRequest request =
+        PerformanceCreateRequest.builder()
+            .title("   ")
+            .performer("정상 가수")
+            .genre(Genre.CONCERT)
+            .showDate(LocalDate.now())
+            .showTime(LocalTime.of(19, 0))
+            .durationMinutes(120)
+            .price(50000L)
+            .totalSeats(100)
+            .address(" ")
+            .imageMainUrl("https://image.png")
+            .build();
+
+    mockMvc
+        .perform(
+            post(baseUrl)
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.code").value("VALID401"))
+        .andExpect(jsonPath("$.isSuccess").value(false))
+        .andExpect(jsonPath("$.result.title").exists())
+        .andExpect(jsonPath("$.result.address").exists());
   }
 
   @Test
@@ -161,7 +256,7 @@ class PerformanceValidationTest {
 
     mockMvc
         .perform(
-            post("/api/v1/performance")
+            post(baseUrl)
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
