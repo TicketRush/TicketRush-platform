@@ -1,8 +1,8 @@
 package com.ticketrush.boundedcontext.performance.in.api.v1;
 
+import com.ticketrush.boundedcontext.performance.app.dto.request.PerformanceCreateRequest;
+import com.ticketrush.boundedcontext.performance.app.dto.response.PerformanceCreateResponse;
 import com.ticketrush.boundedcontext.performance.app.facade.PerformanceFacade;
-import com.ticketrush.boundedcontext.performance.domain.dto.request.PerformanceCreateRequest;
-import com.ticketrush.boundedcontext.performance.domain.dto.response.PerformanceCreateResponse;
 import com.ticketrush.global.dto.response.ApiResponse;
 import com.ticketrush.global.status.SuccessStatus;
 import jakarta.validation.Valid;

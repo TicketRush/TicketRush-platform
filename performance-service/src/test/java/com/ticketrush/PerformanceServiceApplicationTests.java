@@ -5,8 +5,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
 @ActiveProfiles("test")
-@SpringBootTest(classes = TicketServiceApplicationTests.class)
-class TicketServiceApplicationTests {
+@SpringBootTest(classes = PerformanceServiceApplication.class)
+class PerformanceServiceApplicationTests {
 
   @Test
   void contextLoads() {}

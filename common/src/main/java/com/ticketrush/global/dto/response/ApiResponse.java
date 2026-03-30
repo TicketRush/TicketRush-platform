@@ -83,7 +83,7 @@ public class ApiResponse<T> {
     List<T> content = slice.getContent();
 
     if (slice.hasNext() && !content.isEmpty()) {
-      nextCursor = cursorExtractor.apply(content.get(content.size() - 1));
+      nextCursor = cursorExtractor.apply(content.getLast());
     }
 
     // PaginationInfo 타입으로 할당
@@ -95,21 +95,21 @@ public class ApiResponse<T> {
   }
 
   // 실패 - 기본 응답
-  public static ResponseEntity<ApiResponse<Void>> onFailure(ErrorStatus error) {
+  public static ResponseEntity<ApiResponse<?>> onFailure(ErrorStatus error) {
     return new ResponseEntity<>(
         new ApiResponse<>(false, error.getCode(), error.getMessage(), null, null),
         error.getHttpStatus());
   }
 
   // 실패 - 커스텀 메시지 포함
-  public static ResponseEntity<ApiResponse<Void>> onFailure(ErrorStatus error, String message) {
+  public static ResponseEntity<ApiResponse<?>> onFailure(ErrorStatus error, String message) {
     return new ResponseEntity<>(
         new ApiResponse<>(false, error.getCode(), error.getMessage(message), null, null),
         error.getHttpStatus());
   }
 
   // 실패 - 데이터 포함
-  public static ResponseEntity<ApiResponse<Object>> onFailure(ErrorStatus error, Object data) {
+  public static ResponseEntity<ApiResponse<?>> onFailure(ErrorStatus error, Object data) {
     return new ResponseEntity<>(
         new ApiResponse<>(false, error.getCode(), error.getMessage(), null, data),
         error.getHttpStatus());

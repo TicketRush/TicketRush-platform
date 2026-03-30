@@ -11,16 +11,17 @@ allprojects {
     }
 }
 
-// 2. 루트 checkstyle(Java 21) 제외할 서브프로젝트.
-def checkstyleExcludeProjects = ['kafka-connector'] as Set
+// 2. (선택) 루트 checkstyle 제외할 서브프로젝트 지정
+//def checkstyleExcludeProjects = ['kafka-connector'] as Set
 
 subprojects { subproject ->
     apply plugin: 'java'
     apply plugin: 'com.diffplug.spotless'
 
-    if (checkstyleExcludeProjects.contains(subproject.name)) {
-        subproject.ext.skipCheckstyle = true
-    }
+    // 특정 모듈 checkstyle 제외 로직 (사용 시 활성화)
+//    if (checkstyleExcludeProjects.contains(subproject.name)) {
+//        subproject.ext.skipCheckstyle = true
+//    }
 
     if (!subproject.findProperty('skipCheckstyle')) {
         apply plugin: 'checkstyle'
@@ -43,7 +44,6 @@ subprojects { subproject ->
     spotless {
         java {
             googleJavaFormat("1.33.0")
-            // diff 안정화를 위해 하기 옵션 추가
             trimTrailingWhitespace() // 줄 끝 공백 제거
             endWithNewline() // 파일 끝에 newline 강제
         }
