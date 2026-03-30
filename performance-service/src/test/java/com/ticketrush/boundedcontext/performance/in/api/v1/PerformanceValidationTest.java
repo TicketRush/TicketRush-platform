@@ -7,8 +7,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.ticketrush.boundedcontext.performance.app.dto.request.PerformanceCreateRequest;
 import com.ticketrush.boundedcontext.performance.app.facade.PerformanceFacade;
-import com.ticketrush.boundedcontext.performance.domain.dto.request.PerformanceCreateRequest;
 import com.ticketrush.boundedcontext.performance.domain.types.Genre;
 import java.time.LocalDate;
 import java.time.LocalTime;
