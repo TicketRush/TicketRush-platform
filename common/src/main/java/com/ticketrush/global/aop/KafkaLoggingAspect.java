@@ -2,6 +2,7 @@ package com.ticketrush.global.aop;
 
 import com.ticketrush.global.constants.TraceIdConstants;
 import com.ticketrush.global.event.DomainEventEnvelope;
+import java.util.concurrent.TimeUnit;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -26,55 +27,63 @@ public class KafkaLoggingAspect {
     String targetClass = joinPoint.getTarget().getClass().getSimpleName();
     String methodName = joinPoint.getSignature().getName();
     Object[] args = joinPoint.getArgs();
-    long startTime = System.nanoTime();
+    long startNanos = System.nanoTime();
 
-    // Kafka 메시지(Envelope)에서 Trace ID 추출 및 MDC 주입
     String eventTraceId = extractTraceId(args);
     String originalTraceId = MDC.get(TraceIdConstants.TRACE_ID_KEY);
     boolean mdcModified = false;
 
-    if (StringUtils.hasText(eventTraceId) && !eventTraceId.equals(UNKNOWN_TRACE_ID)) {
+    if (StringUtils.hasText(eventTraceId) && !UNKNOWN_TRACE_ID.equals(eventTraceId)) {
       MDC.put(TraceIdConstants.TRACE_ID_KEY, eventTraceId);
       mdcModified = true;
     }
 
     try {
       Object result = joinPoint.proceed();
-      long elapsedTime = System.nanoTime() - startTime;
+      long elapsedMillis = getElapsedMillis(startNanos);
 
-      log.info("[KAFKA CONSUME SUCCESS] {}.{} | Time: {}ms", targetClass, methodName, elapsedTime);
+      log.info(
+          "[KAFKA CONSUME SUCCESS] {}.{} | Time: {}ms", targetClass, methodName, elapsedMillis);
+
       return result;
-
     } catch (Exception e) {
-      long elapsedTime = System.nanoTime() - startTime;
+      long elapsedMillis = getElapsedMillis(startNanos);
+
       log.error(
           "[KAFKA CONSUME FAILED] {}.{} | Time: {}ms | Error: {}",
           targetClass,
           methodName,
-          elapsedTime,
+          elapsedMillis,
           e.getMessage(),
           e);
-      throw e;
 
+      throw e;
     } finally {
-      // 스레드 풀 오염을 방지하기 위한 MDC 복구 처리
       if (mdcModified) {
-        if (originalTraceId != null) {
-          MDC.put(TraceIdConstants.TRACE_ID_KEY, originalTraceId);
-        } else {
-          MDC.remove(TraceIdConstants.TRACE_ID_KEY);
-        }
+        restoreTraceId(originalTraceId);
       }
     }
   }
 
-  // 인자에서 Trace ID 추출
+  private long getElapsedMillis(long startNanos) {
+    return TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startNanos);
+  }
+
+  private void restoreTraceId(String originalTraceId) {
+    if (originalTraceId != null) {
+      MDC.put(TraceIdConstants.TRACE_ID_KEY, originalTraceId);
+    } else {
+      MDC.remove(TraceIdConstants.TRACE_ID_KEY);
+    }
+  }
+
   private String extractTraceId(Object[] args) {
     if (args == null || args.length == 0) {
       return UNKNOWN_TRACE_ID;
     }
 
-    if (args[0] instanceof DomainEventEnvelope envelope
+    Object payload = args[0];
+    if (payload instanceof DomainEventEnvelope envelope
         && StringUtils.hasText(envelope.traceId())) {
       return envelope.traceId();
     }
