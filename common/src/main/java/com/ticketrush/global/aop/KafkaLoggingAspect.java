@@ -2,7 +2,6 @@ package com.ticketrush.global.aop;
 
 import com.ticketrush.global.constants.TraceIdConstants;
 import com.ticketrush.global.event.DomainEventEnvelope;
-import com.ticketrush.global.json.JsonConverter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -10,7 +9,6 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.slf4j.MDC;
-import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -20,9 +18,6 @@ import org.springframework.util.StringUtils;
 @RequiredArgsConstructor
 public class KafkaLoggingAspect {
 
-  private final JsonConverter jsonConverter;
-
-  private static final int MAX_LOG_LENGTH = 1000;
   private static final String UNKNOWN_TRACE_ID = "Unknown";
 
   @Pointcut("@annotation(org.springframework.kafka.annotation.KafkaListener)")
@@ -44,15 +39,6 @@ public class KafkaLoggingAspect {
       MDC.put(TraceIdConstants.TRACE_ID_KEY, eventTraceId);
       mdcModified = true;
     }
-
-    Object payloadArg = AopExtractUtils.extractArgByAnnotation(joinPoint, Payload.class);
-    if (payloadArg == null && args != null && args.length > 0) {
-      payloadArg = args[0];
-    }
-
-    String payload =
-        payloadArg != null ? jsonConverter.serializeForLog(payloadArg, MAX_LOG_LENGTH) : "none";
-    log.info("[KAFKA CONSUME START] {}.{} | Payload: {}", targetClass, methodName, payload);
 
     try {
       Object result = joinPoint.proceed();
