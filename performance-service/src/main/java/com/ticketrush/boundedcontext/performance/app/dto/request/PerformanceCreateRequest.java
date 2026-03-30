@@ -1,4 +1,4 @@
-package com.ticketrush.boundedcontext.performance.domain.dto.request;
+package com.ticketrush.boundedcontext.performance.app.dto.request;
 
 import com.ticketrush.boundedcontext.performance.domain.types.Genre;
 import java.time.LocalDate;

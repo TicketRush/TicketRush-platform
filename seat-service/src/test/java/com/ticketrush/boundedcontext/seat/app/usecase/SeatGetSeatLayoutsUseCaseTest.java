@@ -3,7 +3,7 @@ package com.ticketrush.boundedcontext.seat.app.usecase;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 
-import com.ticketrush.boundedcontext.seat.domain.dto.response.SeatLayoutResponse;
+import com.ticketrush.boundedcontext.seat.app.dto.response.SeatLayoutResponse;
 import com.ticketrush.boundedcontext.seat.out.repository.SeatRepository;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;

@@ -1,4 +1,4 @@
-package com.ticketrush.boundedcontext.performance.domain.dto.response;
+package com.ticketrush.boundedcontext.performance.app.dto.response;
 
 import lombok.Builder;
 

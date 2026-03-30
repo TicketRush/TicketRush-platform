@@ -1,7 +1,7 @@
 package com.ticketrush.boundedcontext.seat.in.api.v1;
 
+import com.ticketrush.boundedcontext.seat.app.dto.response.SeatLayoutResponse;
 import com.ticketrush.boundedcontext.seat.app.facade.SeatFacade;
-import com.ticketrush.boundedcontext.seat.domain.dto.response.SeatLayoutResponse;
 import com.ticketrush.global.dto.response.ApiResponse;
 import com.ticketrush.global.status.SuccessStatus;
 import java.util.List;

@@ -1,7 +1,7 @@
 package com.ticketrush.boundedcontext.performance.app.usecase;
 
-import com.ticketrush.boundedcontext.performance.domain.dto.request.PerformanceCreateRequest;
-import com.ticketrush.boundedcontext.performance.domain.dto.response.PerformanceCreateResponse;
+import com.ticketrush.boundedcontext.performance.app.dto.request.PerformanceCreateRequest;
+import com.ticketrush.boundedcontext.performance.app.dto.response.PerformanceCreateResponse;
 import com.ticketrush.boundedcontext.performance.domain.entity.Performance;
 import com.ticketrush.boundedcontext.performance.out.repository.PerformanceRepository;
 import lombok.RequiredArgsConstructor;
