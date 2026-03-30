@@ -16,9 +16,6 @@ MapStruct는 Java Bean 간의 매핑을 위한 코드를 자동으로 생성해 
 
 ### 3.1. 의존성 추가
 ```groovy
-    // mapper
-    implementation 'org.modelmapper:modelmapper:3.1.1'
-
     // mapstruct
     implementation 'org.mapstruct:mapstruct:1.5.5.Final'
     annotationProcessor "org.projectlombok:lombok-mapstruct-binding:0.2.0"
