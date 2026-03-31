@@ -1,6 +1,5 @@
 package com.ticketrush.boundedcontext.performance.domain.entity;
 
-import com.ticketrush.boundedcontext.performance.app.dto.request.PerformanceCreateRequest;
 import com.ticketrush.boundedcontext.performance.domain.types.Genre;
 import com.ticketrush.boundedcontext.performance.domain.types.PerformanceStatus;
 import com.ticketrush.global.jpa.entity.AutoIdBaseEntity;
@@ -17,6 +16,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,6 +25,8 @@ import lombok.NoArgsConstructor;
 @Table(name = "performance")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@Builder
 @AttributeOverride(name = "id", column = @Column(name = "performance_id"))
 public class Performance extends AutoIdBaseEntity {
 
@@ -78,58 +80,4 @@ public class Performance extends AutoIdBaseEntity {
       joinColumns = @JoinColumn(name = "performance_id"))
   @Column(name = "facility_name")
   private List<String> facilities;
-
-  public static Performance create(PerformanceCreateRequest request) {
-    return Performance.builder()
-        .title(request.title())
-        .performer(request.performer())
-        .genre(request.genre())
-        .description(request.description())
-        .showDate(request.showDate())
-        .showTime(request.showTime())
-        .durationMinutes(request.durationMinutes())
-        .price(request.price())
-        .totalSeats(request.totalSeats())
-        .address(request.address())
-        .performanceStatus(PerformanceStatus.UPCOMING)
-        .image3dUrl(request.image3dUrl())
-        .imageMainUrl(request.imageMainUrl())
-        .imageGalleryUrls(request.imageGalleryUrls())
-        .facilities(request.facilities())
-        .build();
-  }
-
-  @Builder
-  private Performance(
-      String title,
-      String performer,
-      Genre genre,
-      String description,
-      LocalDate showDate,
-      LocalTime showTime,
-      Integer durationMinutes,
-      Long price,
-      Integer totalSeats,
-      String address,
-      PerformanceStatus performanceStatus,
-      String image3dUrl,
-      String imageMainUrl,
-      List<String> imageGalleryUrls,
-      List<String> facilities) {
-    this.title = title;
-    this.performer = performer;
-    this.genre = genre;
-    this.description = description;
-    this.showDate = showDate;
-    this.showTime = showTime;
-    this.durationMinutes = durationMinutes;
-    this.price = price;
-    this.totalSeats = totalSeats;
-    this.address = address;
-    this.performanceStatus = performanceStatus;
-    this.image3dUrl = image3dUrl;
-    this.imageMainUrl = imageMainUrl;
-    this.imageGalleryUrls = imageGalleryUrls;
-    this.facilities = facilities;
-  }
 }

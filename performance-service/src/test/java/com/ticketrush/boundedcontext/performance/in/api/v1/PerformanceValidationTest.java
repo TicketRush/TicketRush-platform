@@ -31,7 +31,7 @@ class PerformanceValidationTest {
 
   @MockitoBean private PerformanceFacade performanceFacade;
 
-  private final String baseUrl = "/api/v1/performance";
+  private final String baseUrl = "/performance";
 
   @Test
   @WithMockUser
