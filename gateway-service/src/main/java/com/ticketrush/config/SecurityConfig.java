@@ -17,25 +17,35 @@ import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-  // CORS 허용 출처 목록 설정값을 담고 있는 객체
+  // CORS 허용 출처 목록 설정값(custom.cors)을 담고 있는 객체
   private final CorsProperties corsProperties;
 
+  // 보안 필터 체인
   @Bean
   public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
+
+    // true > CORS 활성화, false > CORS 비활성화
+    if (corsProperties.isCorsEnabled()) {
+      http.cors(cors -> cors.configurationSource(corsConfigurationSource()));
+    } else {
+      http.cors(ServerHttpSecurity.CorsSpec::disable);
+    }
+
     return http
         // 명시적으로 직접 생성한 CORS 설정 소스를 Security에 주입
-        .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-        .csrf(ServerHttpSecurity.CsrfSpec::disable) // CSRF 보호 disable
-        .formLogin(ServerHttpSecurity.FormLoginSpec::disable) // 폼 로그인 비활성화 - 스프링 시큐리티 기본 로그인 페이지 끔
-        .httpBasic(
-            ServerHttpSecurity.HttpBasicSpec
-                ::disable) // HTTP Basic 비활성화 - Authorization: Basic 방식 인증 끔
-        .authorizeExchange(exchanges -> exchanges.anyExchange().permitAll()) // 모든 인증 허용
+        .csrf(ServerHttpSecurity.CsrfSpec::disable) // CSRF disable(세션 기반 로그인 구조가 아니기 때문)
+        // 폼 로그인 비활성화 - 스프링 시큐리티 기본 로그인 페이지 끔
+        .formLogin(ServerHttpSecurity.FormLoginSpec::disable)
+        // HTTP Basic 비활성화 - Authorization: Basic 방식 인증 끔
+        .httpBasic(ServerHttpSecurity.HttpBasicSpec::disable)
+        // 모든 인증 허용
+        .authorizeExchange(exchanges -> exchanges.anyExchange().permitAll())
         .build();
   }
 
   @Bean
   public CorsConfigurationSource corsConfigurationSource() {
+    // CORS 설정 객체 생성
     CorsConfiguration configuration = new CorsConfiguration();
 
     // 허용할 출처
