@@ -1,4 +1,4 @@
-package com.ticketrush.boundedcontext.booking.app.util;
+package com.ticketrush.boundedcontext.booking.domain.policy;
 
 import java.security.SecureRandom;
 
