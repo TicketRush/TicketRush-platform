@@ -82,14 +82,14 @@ public class KafkaLoggingAspect {
   }
 
   private String extractTraceId(Object[] args) {
-    if (args == null || args.length == 0) {
+    if (args == null) {
       return UNKNOWN_TRACE_ID;
     }
 
-    Object payload = args[0];
-    if (payload instanceof DomainEventEnvelope envelope
-        && StringUtils.hasText(envelope.traceId())) {
-      return envelope.traceId();
+    for (Object arg : args) {
+      if (arg instanceof DomainEventEnvelope envelope && StringUtils.hasText(envelope.traceId())) {
+        return envelope.traceId();
+      }
     }
 
     return UNKNOWN_TRACE_ID;
