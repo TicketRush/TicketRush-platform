@@ -43,7 +43,11 @@ public class KafkaLoggingAspect {
       long elapsedMillis = getElapsedMillis(startNanos);
 
       log.info(
-          "[KAFKA CONSUME SUCCESS] {}.{} | Time: {}ms", targetClass, methodName, elapsedMillis);
+          "[KAFKA CONSUME SUCCESS] {}.{} | TraceId: {} | Time: {}ms",
+          targetClass,
+          methodName,
+          eventTraceId,
+          elapsedMillis);
 
       return result;
     } catch (Exception e) {
