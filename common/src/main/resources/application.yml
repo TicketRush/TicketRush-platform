@@ -1,4 +1,0 @@
-# CORS 허용 origin 주소
-cors:
-  allowed-origins:
-    - http://localhost:8080

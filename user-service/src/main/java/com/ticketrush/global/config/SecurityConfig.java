@@ -24,6 +24,7 @@ public class SecurityConfig {
         .authorizeHttpRequests(
             auth ->
                 auth.requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html")
+                  // TODO: 인증 이후 허용 범위 수정
                     .permitAll()
                     .anyRequest()
                     .permitAll());
