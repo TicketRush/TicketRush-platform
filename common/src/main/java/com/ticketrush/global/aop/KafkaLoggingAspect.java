@@ -54,11 +54,11 @@ public class KafkaLoggingAspect {
       long elapsedMillis = getElapsedMillis(startNanos);
 
       log.error(
-          "[KAFKA CONSUME FAILED] {}.{} | Time: {}ms | Error: {}",
+          "[KAFKA CONSUME FAILED] {}.{} | TraceId: {} | Time: {}ms",
           targetClass,
           methodName,
+          eventTraceId,
           elapsedMillis,
-          e.getMessage(),
           e);
 
       throw e;
