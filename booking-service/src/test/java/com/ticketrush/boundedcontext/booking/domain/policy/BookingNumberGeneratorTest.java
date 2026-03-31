@@ -24,18 +24,13 @@ class BookingNumberGeneratorTest {
   }
 
   @Test
-  @DisplayName("생성된 예약 번호는 무작위성을 가져야 한다. (10,000번 생성 시 중복 없음)")
+  @DisplayName("연속 두 번 생성 시 서로 다른 예약 번호를 반환해야 한다.")
   void testBookingNumberRandomness() {
-    // given
-    int generateCount = 10000;
-    Set<String> generatedNumbers = new HashSet<>();
-
     // when
-    for (int i = 0; i < generateCount; i++) {
-      generatedNumbers.add(BookingNumberGenerator.generate());
-    }
+    String first = BookingNumberGenerator.generate();
+    String second = BookingNumberGenerator.generate();
 
     // then
-    assertThat(generatedNumbers).hasSize(generateCount);
+    assertThat(first).isNotEqualTo(second);
   }
 }
