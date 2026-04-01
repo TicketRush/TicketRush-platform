@@ -16,7 +16,6 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,8 +24,6 @@ import lombok.NoArgsConstructor;
 @Table(name = "performance")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
-@Builder
 @AttributeOverride(name = "id", column = @Column(name = "performance_id"))
 public class Performance extends AutoIdBaseEntity {
 
@@ -80,4 +77,39 @@ public class Performance extends AutoIdBaseEntity {
       joinColumns = @JoinColumn(name = "performance_id"))
   @Column(name = "facility_name")
   private List<String> facilities;
+
+  @Builder
+  public Performance(
+      String title,
+      String performer,
+      Genre genre,
+      String description,
+      LocalDate showDate,
+      LocalTime showTime,
+      Integer durationMinutes,
+      Long price,
+      Integer totalSeats,
+      String address,
+      String image3dUrl,
+      String imageMainUrl,
+      List<String> imageGalleryUrls,
+      List<String> facilities) {
+    this.title = title;
+    this.performer = performer;
+    this.genre = genre;
+    this.description = description;
+    this.showDate = showDate;
+    this.showTime = showTime;
+    this.durationMinutes = durationMinutes;
+    this.price = price;
+    this.totalSeats = totalSeats;
+    this.address = address;
+    this.image3dUrl = image3dUrl;
+    this.imageMainUrl = imageMainUrl;
+    this.imageGalleryUrls = imageGalleryUrls;
+    this.facilities = facilities;
+
+    // [비즈니스 로직] 생성 시점에는 항상 UPCOMING 상태로 고정 (안전성 확보)
+    this.performanceStatus = PerformanceStatus.UPCOMING;
+  }
 }
