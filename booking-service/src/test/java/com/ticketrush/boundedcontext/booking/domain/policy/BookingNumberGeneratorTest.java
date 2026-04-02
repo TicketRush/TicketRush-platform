@@ -22,10 +22,6 @@ class BookingNumberGeneratorTest {
     String bookingNumber = generator.generate();
 
     // then
-    assertThat(bookingNumber).hasSize(11);
-    assertThat(bookingNumber.charAt(5)).isEqualTo('-');
-
-    // 정규식 검증: 0, 1, O, I, L이 제외된 대문자 및 숫자 조합인지 확인
     assertThat(bookingNumber).matches("^[2-9A-HJ-NP-Z]{5}-[2-9A-HJ-NP-Z]{5}$");
   }
 
