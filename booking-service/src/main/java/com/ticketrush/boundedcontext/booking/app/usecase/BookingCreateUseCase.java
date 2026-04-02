@@ -1,7 +1,8 @@
 package com.ticketrush.boundedcontext.booking.app.usecase;
 
+import com.ticketrush.boundedcontext.booking.app.dto.request.BookingCreateRequest;
+import com.ticketrush.boundedcontext.booking.app.mapper.BookingMapper;
 import com.ticketrush.boundedcontext.booking.domain.entity.Booking;
-import com.ticketrush.boundedcontext.booking.domain.types.BookingStatus;
 import com.ticketrush.boundedcontext.booking.out.repository.BookingRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,19 +14,10 @@ import org.springframework.transaction.annotation.Transactional;
 public class BookingCreateUseCase {
 
   private final BookingRepository bookingRepository;
+  private final BookingMapper bookingMapper;
 
-  public Booking execute(
-      Long userId, Long performanceId, Long seatId, Long price, String bookingNumber) {
-    Booking booking =
-        Booking.builder()
-            .bookingNumber(bookingNumber)
-            .userId(userId)
-            .performanceId(performanceId)
-            .seatId(seatId)
-            .price(price)
-            .bookingStatus(BookingStatus.PENDING)
-            .build();
-
+  public Booking execute(BookingCreateRequest request) {
+    Booking booking = bookingMapper.toEntity(request);
     return bookingRepository.save(booking);
   }
 }
