@@ -26,8 +26,9 @@ public class BookingIssueNumberUseCase {
       String generatedNumber = BookingNumberGenerator.generate();
       String redisKey = REDIS_KEY_PREFIX + generatedNumber;
 
-      // Redis SETNX를 이용한 원자적 중복 체크
-      // 예약 번호가 DB에 저장될 때까지만 임시로 잡아두면 되므로 TTL을 짧게(10분) 설정
+      /* Redis SETNX를 이용한 원자적 중복 체크
+       예약 번호가 DB에 저장될 때까지만 임시로 잡아두면 되므로 TTL을 짧게(10분) 설정
+      */
       Boolean isUnique =
           redisTemplate.opsForValue().setIfAbsent(redisKey, "RESERVED", Duration.ofMinutes(10));
 
