@@ -23,7 +23,4 @@ public record PerformanceCreateRequest(
     @NotNull(message = "총 좌석 수는 필수입니다.") @Positive(message = "총 좌석 수는 1개 이상이어야 합니다.")
         Integer totalSeats,
     @NotBlank(message = "공연장 주소는 필수입니다.") String address,
-    String image3dUrl,
-    @NotBlank(message = "메인 이미지 URL은 필수입니다.") String imageMainUrl,
-    List<String> imageGalleryUrls,
     List<String> facilities) {}

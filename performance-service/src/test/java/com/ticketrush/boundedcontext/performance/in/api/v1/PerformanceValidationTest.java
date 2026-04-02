@@ -2,7 +2,7 @@ package com.ticketrush.boundedcontext.performance.in.api.v1;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -10,6 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.ticketrush.boundedcontext.performance.app.dto.request.PerformanceCreateRequest;
 import com.ticketrush.boundedcontext.performance.app.facade.PerformanceFacade;
 import com.ticketrush.boundedcontext.performance.domain.types.Genre;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import org.junit.jupiter.api.DisplayName;
@@ -17,6 +18,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -48,16 +50,24 @@ class PerformanceValidationTest {
             .price(50000L)
             .totalSeats(100)
             .address("서울시")
-            .imageMainUrl("https://image.png")
             .build();
 
+    MockMultipartFile jsonPart =
+        new MockMultipartFile(
+            "request",
+            "",
+            MediaType.APPLICATION_JSON_VALUE,
+            objectMapper.writeValueAsString(request).getBytes(StandardCharsets.UTF_8));
+
+    MockMultipartFile mainImage =
+        new MockMultipartFile("mainImage", "image.png", "image/png", "test".getBytes());
+    MockMultipartFile model3d =
+        new MockMultipartFile(
+            "model3d", "model.glb", "application/octet-stream", "test".getBytes());
+
     mockMvc
-        .perform(
-            post(baseUrl)
-                .with(csrf())
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request)))
-        .andDo(print()) // 로그 확인용 추가
+        .perform(multipart(baseUrl).file(jsonPart).file(mainImage).file(model3d).with(csrf()))
+        .andDo(print())
         .andExpect(status().isBadRequest())
         .andExpect(jsonPath("$.code").value("VALID_400"))
         .andExpect(jsonPath("$.isSuccess").value(false))
@@ -79,15 +89,23 @@ class PerformanceValidationTest {
             .price(-1000L)
             .totalSeats(100)
             .address("서울시")
-            .imageMainUrl("https://image.png")
             .build();
 
+    MockMultipartFile jsonPart =
+        new MockMultipartFile(
+            "request",
+            "",
+            "application/json",
+            objectMapper.writeValueAsString(request).getBytes(StandardCharsets.UTF_8));
+
+    MockMultipartFile mainImage =
+        new MockMultipartFile("mainImage", "image.png", "image/png", "test".getBytes());
+    MockMultipartFile model3d =
+        new MockMultipartFile(
+            "model3d", "model.glb", "application/octet-stream", "test".getBytes());
+
     mockMvc
-        .perform(
-            post(baseUrl)
-                .with(csrf())
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request)))
+        .perform(multipart(baseUrl).file(jsonPart).file(mainImage).file(model3d).with(csrf()))
         .andDo(print())
         .andExpect(status().isBadRequest())
         .andExpect(jsonPath("$.code").value("VALID_400"))
@@ -110,15 +128,23 @@ class PerformanceValidationTest {
             .price(50000L)
             .totalSeats(100)
             .address("서울시")
-            .imageMainUrl("https://image.png")
             .build();
 
+    MockMultipartFile jsonPart =
+        new MockMultipartFile(
+            "request",
+            "",
+            "application/json",
+            objectMapper.writeValueAsString(request).getBytes(StandardCharsets.UTF_8));
+
+    MockMultipartFile mainImage =
+        new MockMultipartFile("mainImage", "image.png", "image/png", "test".getBytes());
+    MockMultipartFile model3d =
+        new MockMultipartFile(
+            "model3d", "model.glb", "application/octet-stream", "test".getBytes());
+
     mockMvc
-        .perform(
-            post(baseUrl)
-                .with(csrf())
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request)))
+        .perform(multipart(baseUrl).file(jsonPart).file(mainImage).file(model3d).with(csrf()))
         .andDo(print())
         .andExpect(status().isBadRequest())
         .andExpect(jsonPath("$.code").value("VALID_400"))
@@ -141,15 +167,23 @@ class PerformanceValidationTest {
             .price(50000L)
             .totalSeats(100)
             .address("")
-            .imageMainUrl("https://image.png")
             .build();
 
+    MockMultipartFile jsonPart =
+        new MockMultipartFile(
+            "request",
+            "",
+            "application/json",
+            objectMapper.writeValueAsString(request).getBytes(StandardCharsets.UTF_8));
+
+    MockMultipartFile mainImage =
+        new MockMultipartFile("mainImage", "image.png", "image/png", "test".getBytes());
+    MockMultipartFile model3d =
+        new MockMultipartFile(
+            "model3d", "model.glb", "application/octet-stream", "test".getBytes());
+
     mockMvc
-        .perform(
-            post(baseUrl)
-                .with(csrf())
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request)))
+        .perform(multipart(baseUrl).file(jsonPart).file(mainImage).file(model3d).with(csrf()))
         .andDo(print())
         .andExpect(status().isBadRequest())
         .andExpect(jsonPath("$.code").value("VALID_400"))
@@ -172,15 +206,23 @@ class PerformanceValidationTest {
             .price(-50000L)
             .totalSeats(100)
             .address("")
-            .imageMainUrl("https://image.png")
             .build();
 
+    MockMultipartFile jsonPart =
+        new MockMultipartFile(
+            "request",
+            "",
+            "application/json",
+            objectMapper.writeValueAsString(request).getBytes(StandardCharsets.UTF_8));
+
+    MockMultipartFile mainImage =
+        new MockMultipartFile("mainImage", "image.png", "image/png", "test".getBytes());
+    MockMultipartFile model3d =
+        new MockMultipartFile(
+            "model3d", "model.glb", "application/octet-stream", "test".getBytes());
+
     mockMvc
-        .perform(
-            post(baseUrl)
-                .with(csrf())
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request)))
+        .perform(multipart(baseUrl).file(jsonPart).file(mainImage).file(model3d).with(csrf()))
         .andDo(print())
         .andExpect(status().isBadRequest())
         .andExpect(jsonPath("$.code").value("VALID_400"))
@@ -205,23 +247,31 @@ class PerformanceValidationTest {
             .price(50000L)
             .totalSeats(-1)
             .address("서울시")
-            .imageMainUrl("")
             .build();
 
+    MockMultipartFile jsonPart =
+        new MockMultipartFile(
+            "request",
+            "",
+            "application/json",
+            objectMapper.writeValueAsString(request).getBytes(StandardCharsets.UTF_8));
+
+    MockMultipartFile mainImage =
+        new MockMultipartFile("mainImage", "image.png", "image/png", "test".getBytes());
+    MockMultipartFile model3d =
+        new MockMultipartFile(
+            "model3d", "model.glb", "application/octet-stream", "test".getBytes());
+
     mockMvc
-        .perform(
-            post(baseUrl)
-                .with(csrf())
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request)))
+        .perform(multipart(baseUrl).file(jsonPart).file(mainImage).file(model3d).with(csrf()))
         .andDo(print())
         .andExpect(status().isBadRequest())
         .andExpect(jsonPath("$.code").value("VALID_400"))
         .andExpect(jsonPath("$.isSuccess").value(false))
         .andExpect(jsonPath("$.message").value(containsString("showDate")))
         .andExpect(jsonPath("$.message").value(containsString("showTime")))
-        .andExpect(jsonPath("$.message").value(containsString("totalSeats")))
-        .andExpect(jsonPath("$.message").value(containsString("imageMainUrl")));
+        .andExpect(jsonPath("$.message").value(containsString("durationMinutes")))
+        .andExpect(jsonPath("$.message").value(containsString("totalSeats")));
   }
 
   @Test
@@ -239,15 +289,23 @@ class PerformanceValidationTest {
             .price(50000L)
             .totalSeats(100)
             .address(" ")
-            .imageMainUrl("https://image.png")
             .build();
 
+    MockMultipartFile jsonPart =
+        new MockMultipartFile(
+            "request",
+            "",
+            "application/json",
+            objectMapper.writeValueAsString(request).getBytes(StandardCharsets.UTF_8));
+
+    MockMultipartFile mainImage =
+        new MockMultipartFile("mainImage", "image.png", "image/png", "test".getBytes());
+    MockMultipartFile model3d =
+        new MockMultipartFile(
+            "model3d", "model.glb", "application/octet-stream", "test".getBytes());
+
     mockMvc
-        .perform(
-            post(baseUrl)
-                .with(csrf())
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request)))
+        .perform(multipart(baseUrl).file(jsonPart).file(mainImage).file(model3d).with(csrf()))
         .andDo(print())
         .andExpect(status().isBadRequest())
         .andExpect(jsonPath("$.code").value("VALID_400"))
@@ -271,15 +329,19 @@ class PerformanceValidationTest {
             .price(50000L)
             .totalSeats(100)
             .address("서울시")
-            .imageMainUrl("https://ticketrush.com/image.png")
             .build();
 
+    MockMultipartFile jsonPart =
+        new MockMultipartFile(
+            "request", "", "application/json", objectMapper.writeValueAsString(request).getBytes());
+    MockMultipartFile mainImage =
+        new MockMultipartFile("mainImage", "test.png", "image/png", "test image".getBytes());
+    MockMultipartFile model3d =
+        new MockMultipartFile(
+            "model3d", "test.glb", "application/octet-stream", "test model".getBytes());
+
     mockMvc
-        .perform(
-            post(baseUrl)
-                .with(csrf())
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request)))
+        .perform(multipart(baseUrl).file(jsonPart).file(mainImage).file(model3d).with(csrf()))
         .andExpect(status().isCreated())
         .andExpect(jsonPath("$.isSuccess").value(true));
   }

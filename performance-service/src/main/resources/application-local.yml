@@ -10,6 +10,17 @@ spring:
     open-in-view: false
   kafka:
     bootstrap-servers: localhost:29092
+  cloud:
+    aws:
+      region:
+        static: ap-northeast-2
+      credentials:
+        access-key: local-dummy-key
+        secret-key: local-dummy-secret
+      stack:
+        auto: false
+      s3:
+        bucket: ticket-rush-local-bucket
 app:
   event-publisher:
     type: kafka
