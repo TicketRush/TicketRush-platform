@@ -1,6 +1,14 @@
 server:
   port: 8080
 
+custom:
+  cors:
+    enabled: true
+    allowed-origins:
+      - http://localhost:3000
+      - http://localhost:8080
+
+
 spring:
   application:
     name: gateway-service
@@ -59,14 +67,10 @@ spring:
               filters:
                 - RewritePath=/v3/api-docs/ticket,/v3/api-docs
 
-  servlet:
-    multipart:
-      max-file-size: 10MB
-      max-request-size: 10MB
-
 # 각 서비스의 API docs를 Gateway에서 통합
 springdoc:
   swagger-ui:
+    disable-swagger-default-url: true
     urls:
       - name: user-service
         url: /v3/api-docs/user

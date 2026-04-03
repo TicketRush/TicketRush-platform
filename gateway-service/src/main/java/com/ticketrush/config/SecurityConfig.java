@@ -65,6 +65,7 @@ public class SecurityConfig {
 
     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
     source.registerCorsConfiguration("/**", configuration); // 모든 경로에 적용
+
     return source;
   }
 }

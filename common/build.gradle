@@ -47,6 +47,9 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
+	// swagger
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.1'
+
 	// MySQL
 	runtimeOnly 'com.mysql:mysql-connector-j'
 
@@ -75,9 +78,6 @@ dependencies {
 
 	// aop
 	implementation 'org.springframework.boot:spring-boot-starter-aspectj'
-
-	// gateway
-	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.1'
 }
 
 dependencyManagement {

@@ -3,5 +3,19 @@ server:
   forward-headers-strategy: framework
 
 spring:
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:local}
   application:
     name: user-service
+
+custom:
+  global:
+    internalBackUrl: http://localhost:${server.port:8081}
+  swagger:
+    serverUrl: http://localhost:8080
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: false
