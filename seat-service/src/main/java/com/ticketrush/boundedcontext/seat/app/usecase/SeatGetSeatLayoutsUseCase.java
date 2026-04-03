@@ -1,6 +1,6 @@
 package com.ticketrush.boundedcontext.seat.app.usecase;
 
-import com.ticketrush.boundedcontext.seat.domain.dto.response.SeatLayoutResponse;
+import com.ticketrush.boundedcontext.seat.app.dto.response.SeatLayoutResponse;
 import com.ticketrush.boundedcontext.seat.out.repository.SeatRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

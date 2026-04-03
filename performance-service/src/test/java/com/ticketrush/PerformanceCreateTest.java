@@ -2,9 +2,9 @@ package com.ticketrush;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.ticketrush.boundedcontext.performance.app.dto.request.PerformanceCreateRequest;
+import com.ticketrush.boundedcontext.performance.app.dto.response.PerformanceCreateResponse;
 import com.ticketrush.boundedcontext.performance.app.usecase.PerformanceCreateUseCase;
-import com.ticketrush.boundedcontext.performance.domain.dto.request.PerformanceCreateRequest;
-import com.ticketrush.boundedcontext.performance.domain.dto.response.PerformanceCreateResponse;
 import com.ticketrush.boundedcontext.performance.domain.types.Genre;
 import com.ticketrush.boundedcontext.performance.out.repository.PerformanceRepository;
 import java.time.LocalDate;

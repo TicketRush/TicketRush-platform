@@ -1,10 +1,11 @@
 package com.ticketrush.boundedcontext.performance.in.api.v1;
 
+import com.ticketrush.boundedcontext.performance.app.dto.request.PerformanceCreateRequest;
+import com.ticketrush.boundedcontext.performance.app.dto.response.PerformanceCreateResponse;
 import com.ticketrush.boundedcontext.performance.app.facade.PerformanceFacade;
-import com.ticketrush.boundedcontext.performance.domain.dto.request.PerformanceCreateRequest;
-import com.ticketrush.boundedcontext.performance.domain.dto.response.PerformanceCreateResponse;
 import com.ticketrush.global.dto.response.ApiResponse;
 import com.ticketrush.global.status.SuccessStatus;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,7 +22,7 @@ public class PerformanceAdminController {
 
   @PostMapping
   public ResponseEntity<ApiResponse<PerformanceCreateResponse>> createPerformance(
-      @RequestBody PerformanceCreateRequest request) {
+      @Valid @RequestBody PerformanceCreateRequest request) {
 
     PerformanceCreateResponse response = performanceFacade.createPerformance(request);
 
