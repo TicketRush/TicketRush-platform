@@ -1,0 +1,27 @@
+package com.ticketrush.shared.booking.event;
+
+import com.ticketrush.global.event.DomainEvent;
+import com.ticketrush.global.event.EventUtils;
+
+public record BookingCreatedEvent(Long bookingId, Long seatId, Long performanceId, Long userId)
+    implements DomainEvent {
+  @Override
+  public String topic() {
+    return "booking-created-topic";
+  }
+
+  @Override
+  public String key() {
+    return String.valueOf(performanceId);
+  }
+
+  @Override
+  public String eventName() {
+    return "BookingCreatedEvent";
+  }
+
+  @Override
+  public String traceId() {
+    return EventUtils.extractTraceId();
+  }
+}
