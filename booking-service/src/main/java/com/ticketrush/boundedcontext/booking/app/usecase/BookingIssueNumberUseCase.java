@@ -1,6 +1,8 @@
 package com.ticketrush.boundedcontext.booking.app.usecase;
 
 import com.ticketrush.boundedcontext.booking.domain.policy.BookingNumberGenerator;
+import com.ticketrush.global.exception.BusinessException;
+import com.ticketrush.global.status.ErrorStatus;
 import java.time.Duration;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,6 +38,6 @@ public class BookingIssueNumberUseCase {
       log.warn("예약 번호 충돌 발생, 재시도합니다. (시도 횟수: {})", i + 1);
     }
 
-    throw new IllegalStateException("고유한 예약 번호를 생성할 수 없습니다. 잠시 후 다시 시도해주세요.");
+    throw new BusinessException(ErrorStatus.BOOKING_NUMBER_RETRY_EXCEEDED);
   }
 }
