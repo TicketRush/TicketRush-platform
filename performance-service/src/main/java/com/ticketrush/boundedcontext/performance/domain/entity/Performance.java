@@ -1,6 +1,5 @@
 package com.ticketrush.boundedcontext.performance.domain.entity;
 
-import com.ticketrush.boundedcontext.performance.app.dto.request.PerformanceCreateRequest;
 import com.ticketrush.boundedcontext.performance.domain.types.Genre;
 import com.ticketrush.boundedcontext.performance.domain.types.PerformanceStatus;
 import com.ticketrush.global.jpa.entity.AutoIdBaseEntity;
@@ -79,28 +78,8 @@ public class Performance extends AutoIdBaseEntity {
   @Column(name = "facility_name")
   private List<String> facilities;
 
-  public static Performance create(PerformanceCreateRequest request) {
-    return Performance.builder()
-        .title(request.title())
-        .performer(request.performer())
-        .genre(request.genre())
-        .description(request.description())
-        .showDate(request.showDate())
-        .showTime(request.showTime())
-        .durationMinutes(request.durationMinutes())
-        .price(request.price())
-        .totalSeats(request.totalSeats())
-        .address(request.address())
-        .performanceStatus(PerformanceStatus.UPCOMING)
-        .image3dUrl(request.image3dUrl())
-        .imageMainUrl(request.imageMainUrl())
-        .imageGalleryUrls(request.imageGalleryUrls())
-        .facilities(request.facilities())
-        .build();
-  }
-
   @Builder
-  private Performance(
+  public Performance(
       String title,
       String performer,
       Genre genre,
@@ -111,7 +90,6 @@ public class Performance extends AutoIdBaseEntity {
       Long price,
       Integer totalSeats,
       String address,
-      PerformanceStatus performanceStatus,
       String image3dUrl,
       String imageMainUrl,
       List<String> imageGalleryUrls,
@@ -126,10 +104,12 @@ public class Performance extends AutoIdBaseEntity {
     this.price = price;
     this.totalSeats = totalSeats;
     this.address = address;
-    this.performanceStatus = performanceStatus;
     this.image3dUrl = image3dUrl;
     this.imageMainUrl = imageMainUrl;
     this.imageGalleryUrls = imageGalleryUrls;
     this.facilities = facilities;
+
+    // [비즈니스 로직] 생성 시점에는 항상 UPCOMING 상태로 고정 (안전성 확보)
+    this.performanceStatus = PerformanceStatus.UPCOMING;
   }
 }
