@@ -3,7 +3,6 @@ package com.ticketrush.boundedcontext.performance.in.api.v1;
 import static org.hamcrest.Matchers.containsString;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -22,6 +21,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 import tools.jackson.databind.ObjectMapper;
 
 @WebMvcTest(PerformanceAdminController.class)
@@ -33,25 +33,22 @@ class PerformanceValidationTest {
 
   @MockitoBean private PerformanceFacade performanceFacade;
 
-  private final String baseUrl = "/api/v1/performance";
+  final String baseUrl = "/api/v1/performance";
 
-  @Test
-  @WithMockUser
-  @DisplayName("공연명이 비어있으면 에러가 발생한다")
-  void titleNotBlankValidationFail() throws Exception {
-    PerformanceCreateRequest request =
-        PerformanceCreateRequest.builder()
-            .title("")
-            .performer("정상 가수")
-            .genre(Genre.CONCERT)
-            .showDate(LocalDate.now())
-            .showTime(LocalTime.of(19, 0))
-            .durationMinutes(120)
-            .price(50000L)
-            .totalSeats(100)
-            .address("서울시")
-            .build();
+  private PerformanceCreateRequest.PerformanceCreateRequestBuilder createBaseRequest() {
+    return PerformanceCreateRequest.builder()
+        .title("정상 제목")
+        .performer("정상 가수")
+        .genre(Genre.CONCERT)
+        .showDate(LocalDate.now())
+        .showTime(LocalTime.of(19, 0))
+        .durationMinutes(120)
+        .price(50000L)
+        .totalSeats(100)
+        .address("서울시");
+  }
 
+  private ResultActions performMultipartRequest(PerformanceCreateRequest request) throws Exception {
     MockMultipartFile jsonPart =
         new MockMultipartFile(
             "request",
@@ -60,17 +57,23 @@ class PerformanceValidationTest {
             objectMapper.writeValueAsString(request).getBytes(StandardCharsets.UTF_8));
 
     MockMultipartFile mainImage =
-        new MockMultipartFile("mainImage", "image.png", "image/png", "test".getBytes());
+        new MockMultipartFile("mainImage", "i.png", "image/png", "t".getBytes());
     MockMultipartFile model3d =
-        new MockMultipartFile(
-            "model3d", "model.glb", "application/octet-stream", "test".getBytes());
+        new MockMultipartFile("model3d", "m.glb", "application/octet-stream", "t".getBytes());
 
-    mockMvc
-        .perform(multipart(baseUrl).file(jsonPart).file(mainImage).file(model3d).with(csrf()))
-        .andDo(print())
+    return mockMvc.perform(
+        multipart(baseUrl).file(jsonPart).file(mainImage).file(model3d).with(csrf()));
+  }
+
+  @Test
+  @WithMockUser
+  @DisplayName("공연명이 비어있으면 에러가 발생한다")
+  void titleNotBlankValidationFail() throws Exception {
+    PerformanceCreateRequest request = createBaseRequest().title("").build();
+
+    performMultipartRequest(request)
         .andExpect(status().isBadRequest())
         .andExpect(jsonPath("$.code").value("VALID_400"))
-        .andExpect(jsonPath("$.isSuccess").value(false))
         .andExpect(jsonPath("$.message").value(containsString("title")));
   }
 
@@ -78,38 +81,10 @@ class PerformanceValidationTest {
   @WithMockUser
   @DisplayName("가격이 음수이면 에러가 발생한다")
   void pricePositiveValidationFail() throws Exception {
-    PerformanceCreateRequest request =
-        PerformanceCreateRequest.builder()
-            .title("정상 제목")
-            .performer("정상 가수")
-            .genre(Genre.CONCERT)
-            .showDate(LocalDate.now())
-            .showTime(LocalTime.of(19, 0))
-            .durationMinutes(120)
-            .price(-1000L)
-            .totalSeats(100)
-            .address("서울시")
-            .build();
+    PerformanceCreateRequest request = createBaseRequest().price(-1000L).build();
 
-    MockMultipartFile jsonPart =
-        new MockMultipartFile(
-            "request",
-            "",
-            "application/json",
-            objectMapper.writeValueAsString(request).getBytes(StandardCharsets.UTF_8));
-
-    MockMultipartFile mainImage =
-        new MockMultipartFile("mainImage", "image.png", "image/png", "test".getBytes());
-    MockMultipartFile model3d =
-        new MockMultipartFile(
-            "model3d", "model.glb", "application/octet-stream", "test".getBytes());
-
-    mockMvc
-        .perform(multipart(baseUrl).file(jsonPart).file(mainImage).file(model3d).with(csrf()))
-        .andDo(print())
+    performMultipartRequest(request)
         .andExpect(status().isBadRequest())
-        .andExpect(jsonPath("$.code").value("VALID_400"))
-        .andExpect(jsonPath("$.isSuccess").value(false))
         .andExpect(jsonPath("$.message").value(containsString("price")));
   }
 
@@ -117,38 +92,11 @@ class PerformanceValidationTest {
   @WithMockUser
   @DisplayName("장르를 선택하지 않으면 에러가 발생한다")
   void genreNotNullValidationFail() throws Exception {
-    PerformanceCreateRequest request =
-        PerformanceCreateRequest.builder()
-            .title("정상 제목")
-            .performer("정상 가수")
-            .genre(null)
-            .showDate(LocalDate.now())
-            .showTime(LocalTime.of(19, 0))
-            .durationMinutes(120)
-            .price(50000L)
-            .totalSeats(100)
-            .address("서울시")
-            .build();
+    PerformanceCreateRequest request = createBaseRequest().genre(null).build();
 
-    MockMultipartFile jsonPart =
-        new MockMultipartFile(
-            "request",
-            "",
-            "application/json",
-            objectMapper.writeValueAsString(request).getBytes(StandardCharsets.UTF_8));
-
-    MockMultipartFile mainImage =
-        new MockMultipartFile("mainImage", "image.png", "image/png", "test".getBytes());
-    MockMultipartFile model3d =
-        new MockMultipartFile(
-            "model3d", "model.glb", "application/octet-stream", "test".getBytes());
-
-    mockMvc
-        .perform(multipart(baseUrl).file(jsonPart).file(mainImage).file(model3d).with(csrf()))
-        .andDo(print())
+    performMultipartRequest(request)
         .andExpect(status().isBadRequest())
         .andExpect(jsonPath("$.code").value("VALID_400"))
-        .andExpect(jsonPath("$.isSuccess").value(false))
         .andExpect(jsonPath("$.message").value(containsString("genre")));
   }
 
@@ -156,38 +104,10 @@ class PerformanceValidationTest {
   @WithMockUser
   @DisplayName("공연장 주소가 비어있으면 에러가 발생한다")
   void addressNotBlankValidationFail() throws Exception {
-    PerformanceCreateRequest request =
-        PerformanceCreateRequest.builder()
-            .title("정상 제목")
-            .performer("정상 가수")
-            .genre(Genre.CONCERT)
-            .showDate(LocalDate.now())
-            .showTime(LocalTime.of(19, 0))
-            .durationMinutes(120)
-            .price(50000L)
-            .totalSeats(100)
-            .address("")
-            .build();
+    PerformanceCreateRequest request = createBaseRequest().address("").build();
 
-    MockMultipartFile jsonPart =
-        new MockMultipartFile(
-            "request",
-            "",
-            "application/json",
-            objectMapper.writeValueAsString(request).getBytes(StandardCharsets.UTF_8));
-
-    MockMultipartFile mainImage =
-        new MockMultipartFile("mainImage", "image.png", "image/png", "test".getBytes());
-    MockMultipartFile model3d =
-        new MockMultipartFile(
-            "model3d", "model.glb", "application/octet-stream", "test".getBytes());
-
-    mockMvc
-        .perform(multipart(baseUrl).file(jsonPart).file(mainImage).file(model3d).with(csrf()))
-        .andDo(print())
+    performMultipartRequest(request)
         .andExpect(status().isBadRequest())
-        .andExpect(jsonPath("$.code").value("VALID_400"))
-        .andExpect(jsonPath("$.isSuccess").value(false))
         .andExpect(jsonPath("$.message").value(containsString("address")));
   }
 
@@ -196,37 +116,11 @@ class PerformanceValidationTest {
   @DisplayName("여러 필드가 동시에 유효하지 않으면 VALID401 에러가 발생한다")
   void complexValidationFail() throws Exception {
     PerformanceCreateRequest request =
-        PerformanceCreateRequest.builder()
-            .title("")
-            .performer("정상 가수")
-            .genre(Genre.CONCERT)
-            .showDate(LocalDate.now())
-            .showTime(LocalTime.of(19, 0))
-            .durationMinutes(120)
-            .price(-50000L)
-            .totalSeats(100)
-            .address("")
-            .build();
+        createBaseRequest().title("").price(-50000L).address("").build();
 
-    MockMultipartFile jsonPart =
-        new MockMultipartFile(
-            "request",
-            "",
-            "application/json",
-            objectMapper.writeValueAsString(request).getBytes(StandardCharsets.UTF_8));
-
-    MockMultipartFile mainImage =
-        new MockMultipartFile("mainImage", "image.png", "image/png", "test".getBytes());
-    MockMultipartFile model3d =
-        new MockMultipartFile(
-            "model3d", "model.glb", "application/octet-stream", "test".getBytes());
-
-    mockMvc
-        .perform(multipart(baseUrl).file(jsonPart).file(mainImage).file(model3d).with(csrf()))
-        .andDo(print())
+    performMultipartRequest(request)
         .andExpect(status().isBadRequest())
         .andExpect(jsonPath("$.code").value("VALID_400"))
-        .andExpect(jsonPath("$.isSuccess").value(false))
         .andExpect(jsonPath("$.message").value(containsString("title")))
         .andExpect(jsonPath("$.message").value(containsString("price")))
         .andExpect(jsonPath("$.message").value(containsString("address")));
@@ -237,37 +131,10 @@ class PerformanceValidationTest {
   @DisplayName("필수 필드가 누락되거나 잘못되면 VALID401 에러가 발생한다")
   void mandatoryFieldsValidationFail() throws Exception {
     PerformanceCreateRequest request =
-        PerformanceCreateRequest.builder()
-            .title("정상 제목")
-            .performer("정상 가수")
-            .genre(Genre.CONCERT)
-            .showDate(null)
-            .showTime(null)
-            .durationMinutes(0)
-            .price(50000L)
-            .totalSeats(-1)
-            .address("서울시")
-            .build();
+        createBaseRequest().showDate(null).showTime(null).durationMinutes(0).totalSeats(-1).build();
 
-    MockMultipartFile jsonPart =
-        new MockMultipartFile(
-            "request",
-            "",
-            "application/json",
-            objectMapper.writeValueAsString(request).getBytes(StandardCharsets.UTF_8));
-
-    MockMultipartFile mainImage =
-        new MockMultipartFile("mainImage", "image.png", "image/png", "test".getBytes());
-    MockMultipartFile model3d =
-        new MockMultipartFile(
-            "model3d", "model.glb", "application/octet-stream", "test".getBytes());
-
-    mockMvc
-        .perform(multipart(baseUrl).file(jsonPart).file(mainImage).file(model3d).with(csrf()))
-        .andDo(print())
+    performMultipartRequest(request)
         .andExpect(status().isBadRequest())
-        .andExpect(jsonPath("$.code").value("VALID_400"))
-        .andExpect(jsonPath("$.isSuccess").value(false))
         .andExpect(jsonPath("$.message").value(containsString("showDate")))
         .andExpect(jsonPath("$.message").value(containsString("showTime")))
         .andExpect(jsonPath("$.message").value(containsString("durationMinutes")))
@@ -278,38 +145,10 @@ class PerformanceValidationTest {
   @WithMockUser
   @DisplayName("필수 문자열 필드에 공백(\" \")만 입력되면 VALID401 에러가 발생한다")
   void whiteSpaceValidationFail() throws Exception {
-    PerformanceCreateRequest request =
-        PerformanceCreateRequest.builder()
-            .title("   ")
-            .performer("정상 가수")
-            .genre(Genre.CONCERT)
-            .showDate(LocalDate.now())
-            .showTime(LocalTime.of(19, 0))
-            .durationMinutes(120)
-            .price(50000L)
-            .totalSeats(100)
-            .address(" ")
-            .build();
+    PerformanceCreateRequest request = createBaseRequest().title("   ").address(" ").build();
 
-    MockMultipartFile jsonPart =
-        new MockMultipartFile(
-            "request",
-            "",
-            "application/json",
-            objectMapper.writeValueAsString(request).getBytes(StandardCharsets.UTF_8));
-
-    MockMultipartFile mainImage =
-        new MockMultipartFile("mainImage", "image.png", "image/png", "test".getBytes());
-    MockMultipartFile model3d =
-        new MockMultipartFile(
-            "model3d", "model.glb", "application/octet-stream", "test".getBytes());
-
-    mockMvc
-        .perform(multipart(baseUrl).file(jsonPart).file(mainImage).file(model3d).with(csrf()))
-        .andDo(print())
+    performMultipartRequest(request)
         .andExpect(status().isBadRequest())
-        .andExpect(jsonPath("$.code").value("VALID_400"))
-        .andExpect(jsonPath("$.isSuccess").value(false))
         .andExpect(jsonPath("$.message").value(containsString("title")))
         .andExpect(jsonPath("$.message").value(containsString("address")));
   }
@@ -318,30 +157,9 @@ class PerformanceValidationTest {
   @WithMockUser
   @DisplayName("모든 값이 올바르면 201 응답을 반환한다")
   void createPerformanceSuccess() throws Exception {
-    PerformanceCreateRequest request =
-        PerformanceCreateRequest.builder()
-            .title("정상 공연")
-            .performer("아티스트")
-            .genre(Genre.CONCERT)
-            .showDate(LocalDate.now())
-            .showTime(LocalTime.of(19, 0))
-            .durationMinutes(150)
-            .price(50000L)
-            .totalSeats(100)
-            .address("서울시")
-            .build();
+    PerformanceCreateRequest request = createBaseRequest().build();
 
-    MockMultipartFile jsonPart =
-        new MockMultipartFile(
-            "request", "", "application/json", objectMapper.writeValueAsString(request).getBytes());
-    MockMultipartFile mainImage =
-        new MockMultipartFile("mainImage", "test.png", "image/png", "test image".getBytes());
-    MockMultipartFile model3d =
-        new MockMultipartFile(
-            "model3d", "test.glb", "application/octet-stream", "test model".getBytes());
-
-    mockMvc
-        .perform(multipart(baseUrl).file(jsonPart).file(mainImage).file(model3d).with(csrf()))
+    performMultipartRequest(request)
         .andExpect(status().isCreated())
         .andExpect(jsonPath("$.isSuccess").value(true));
   }

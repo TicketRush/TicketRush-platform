@@ -2,6 +2,7 @@ package com.ticketrush.boundedcontext.performance.app.usecase;
 
 import com.ticketrush.boundedcontext.performance.app.dto.request.PerformanceCreateRequest;
 import com.ticketrush.boundedcontext.performance.app.dto.response.PerformanceCreateResponse;
+import com.ticketrush.boundedcontext.performance.app.mapper.PerformanceMapper;
 import com.ticketrush.boundedcontext.performance.domain.entity.Performance;
 import com.ticketrush.boundedcontext.performance.global.util.S3UploadUtils;
 import com.ticketrush.boundedcontext.performance.out.repository.PerformanceRepository;
@@ -19,8 +20,9 @@ public class PerformanceCreateUseCase {
 
   private final S3UploadUtils s3UploadUtils;
   private final PerformanceRepository performanceRepository;
+  private final PerformanceMapper performanceMapper;
 
-  /** 공연 정보와 파일들을 받아 S3 업로드 후 DB에 저장합니다. */
+  /** 공연 정보와 파일들을 받아 S3 업로드 후 DB에 저장 */
   @Transactional
   public PerformanceCreateResponse execute(
       PerformanceCreateRequest request,
@@ -28,46 +30,35 @@ public class PerformanceCreateUseCase {
       MultipartFile model3d,
       List<MultipartFile> gallery) {
 
-    // 1. 필수 파일 및 갤러리 개수 검증
     validateFiles(mainImage, model3d, gallery);
 
-    // 2. 파일 업로드
     String mainImageUrl = s3UploadUtils.uploadFile(mainImage);
     String model3dUrl = s3UploadUtils.uploadFile(model3d);
     List<String> galleryUrls =
         (gallery != null) ? gallery.stream().map(s3UploadUtils::uploadFile).toList() : List.of();
 
-    // 3. 엔티티 생성
-    Performance performance =
-        Performance.builder()
-            .title(request.title())
-            .performer(request.performer())
-            .genre(request.genre())
-            .description(request.description())
-            .showDate(request.showDate())
-            .showTime(request.showTime())
-            .durationMinutes(request.durationMinutes())
-            .price(request.price())
-            .totalSeats(request.totalSeats())
-            .address(request.address())
-            .imageMainUrl(mainImageUrl)
-            .image3dUrl(model3dUrl)
-            .imageGalleryUrls(galleryUrls)
-            .facilities(request.facilities())
-            .build();
+    Performance performance = performanceMapper.toEntity(request);
+
+    performance.updateUrls(mainImageUrl, model3dUrl, galleryUrls);
 
     Performance savedPerformance = performanceRepository.save(performance);
 
-    return PerformanceCreateResponse.from(savedPerformance);
+    return performanceMapper.toCreateResponse(savedPerformance);
   }
 
   private void validateFiles(
       MultipartFile mainImage, MultipartFile model3d, List<MultipartFile> gallery) {
-    if (mainImage == null || mainImage.isEmpty() || model3d == null || model3d.isEmpty()) {
-      throw new BusinessException(ErrorStatus.BAD_REQUEST);
+
+    if (mainImage == null || mainImage.isEmpty()) {
+      throw new BusinessException(ErrorStatus.PERFORMANCE_MAIN_IMAGE_MISSING);
     }
+
+    if (model3d == null || model3d.isEmpty()) {
+      throw new BusinessException(ErrorStatus.PERFORMANCE_MODEL_3D_MISSING);
+    }
+
     if (gallery != null && gallery.size() > 3) {
-      throw new BusinessException(ErrorStatus.BAD_REQUEST);
+      throw new BusinessException(ErrorStatus.PERFORMANCE_GALLERY_LIMIT_EXCEEDED);
     }
   }
 }

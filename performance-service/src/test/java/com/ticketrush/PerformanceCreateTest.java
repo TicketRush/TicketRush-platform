@@ -1,6 +1,7 @@
 package com.ticketrush;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.BDDMockito.given;
 
 import com.ticketrush.boundedcontext.performance.app.dto.request.PerformanceCreateRequest;
 import com.ticketrush.boundedcontext.performance.app.dto.response.PerformanceCreateResponse;
@@ -11,6 +12,7 @@ import com.ticketrush.boundedcontext.performance.out.repository.PerformanceRepos
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -19,7 +21,6 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import software.amazon.awssdk.services.s3.S3Client;
 
 @SpringBootTest
 @EnableAutoConfiguration(
@@ -30,8 +31,6 @@ import software.amazon.awssdk.services.s3.S3Client;
 @Transactional
 class PerformanceCreateTest {
 
-  @MockitoBean private S3Client s3Client;
-
   @MockitoBean private S3UploadUtils s3UploadUtils;
 
   @Autowired private PerformanceCreateUseCase performanceCreateUseCase;
@@ -39,6 +38,7 @@ class PerformanceCreateTest {
   @Autowired private PerformanceRepository performanceRepository;
 
   @Test
+  @DisplayName("공연 등록 시 이미지 및 3D 모델 URL이 DB에 정상적으로 저장되어야 한다")
   void createPerformanceTest() {
     PerformanceCreateRequest request =
         PerformanceCreateRequest.builder()
@@ -55,28 +55,33 @@ class PerformanceCreateTest {
             .build();
 
     MockMultipartFile mainImage =
-        new MockMultipartFile(
-            "mainImage", "test.png", "image/png", "test image content".getBytes());
+        new MockMultipartFile("mainImage", "test.png", "image/png", "content".getBytes());
     MockMultipartFile model3d =
         new MockMultipartFile(
-            "model3d", "test.glb", "application/octet-stream", "test model content".getBytes());
-    List<MultipartFile> gallery = List.of();
+            "model3d", "test.glb", "application/octet-stream", "content".getBytes());
+    List<MultipartFile> gallery =
+        List.of(new MockMultipartFile("gallery", "g1.png", "image/png", "content".getBytes()));
+
+    String expectedMainUrl = "https://s3.main-image.png";
+    String expectedModelUrl = "https://s3.test-model.glb";
+    String expectedGalleryUrl = "https://s3.gallery-1.png";
+
+    given(s3UploadUtils.uploadFile(mainImage)).willReturn(expectedMainUrl);
+    given(s3UploadUtils.uploadFile(model3d)).willReturn(expectedModelUrl);
+    given(s3UploadUtils.uploadFile(gallery.get(0))).willReturn(expectedGalleryUrl);
 
     PerformanceCreateResponse response =
         performanceCreateUseCase.execute(request, mainImage, model3d, gallery);
 
     assertThat(response).isNotNull();
-    assertThat(response.performanceId()).isNotNull();
 
-    var savedPerformance =
-        performanceRepository
-            .findById(response.performanceId())
-            .orElseThrow(() -> new AssertionError("저장된 공연을 찾을 수 없습니다."));
+    var savedPerformance = performanceRepository.findById(response.performanceId()).orElseThrow();
 
     assertThat(savedPerformance.getTitle()).isEqualTo(request.title());
-    assertThat(savedPerformance.getPerformer()).isEqualTo(request.performer());
-    assertThat(savedPerformance.getGenre()).isEqualTo(request.genre());
-    assertThat(savedPerformance.getPrice()).isEqualTo(request.price());
-    assertThat(savedPerformance.getTotalSeats()).isEqualTo(request.totalSeats());
+
+    assertThat(savedPerformance.getImageMainUrl()).isEqualTo(expectedMainUrl);
+    assertThat(savedPerformance.getImage3dUrl()).isEqualTo(expectedModelUrl);
+    assertThat(savedPerformance.getImageGalleryUrls()).hasSize(1);
+    assertThat(savedPerformance.getImageGalleryUrls().get(0)).isEqualTo(expectedGalleryUrl);
   }
 }

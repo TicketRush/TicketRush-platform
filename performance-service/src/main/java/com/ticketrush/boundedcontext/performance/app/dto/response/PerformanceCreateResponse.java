@@ -1,9 +1,7 @@
 package com.ticketrush.boundedcontext.performance.app.dto.response;
 
 import com.ticketrush.boundedcontext.performance.domain.entity.Performance;
-import lombok.Builder;
 
-@Builder
 public record PerformanceCreateResponse(Long performanceId) {
 
   /**

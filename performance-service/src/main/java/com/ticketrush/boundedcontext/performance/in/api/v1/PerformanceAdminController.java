@@ -38,6 +38,7 @@ public class PerformanceAdminController {
     // Facade에서 파일 업로드와 정보 저장을 함께 처리하도록 위임
     PerformanceCreateResponse response =
         performanceFacade.createPerformance(request, mainImage, model3d, gallery);
+
     return ApiResponse.onSuccess(SuccessStatus.CREATED, response);
   }
 }
