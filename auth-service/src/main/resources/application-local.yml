@@ -14,3 +14,15 @@ spring:
 app:
   event-publisher:
     type: kafka
+
+custom:
+  security:
+    permit-all: false
+    permit-urls:
+      # ========== 개발 도구 ==========
+      - /h2-console/**
+      - /swagger-ui/**
+      - /v3/api-docs/**
+      - /
+      - /favicon.ico
+      - /error
