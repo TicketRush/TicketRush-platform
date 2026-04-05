@@ -17,13 +17,13 @@ public class BookingFacade {
   private final BookingCreateUseCase bookingCreateUseCase;
   private final EventPublisher eventPublisher;
 
-  public Booking createBooking(Long userId, Long performanceId, Long seatId, Long price) {
+  public Booking createBooking(Long userId, Long performanceId, Long seatId) {
     // 1. 고유 예약 번호 발급
     String bookingNumber = bookingIssueNumberUseCase.execute();
 
     // 2. PENDING 상태로 예매 생성
     BookingCreateRequest request =
-        new BookingCreateRequest(userId, performanceId, seatId, price, bookingNumber);
+        new BookingCreateRequest(userId, performanceId, seatId, bookingNumber);
     Booking savedBooking = bookingCreateUseCase.execute(request);
 
     // 3. 트랜잭션 성공 후 "가주문 생성됨" 이벤트 발행

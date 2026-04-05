@@ -34,9 +34,6 @@ public class Booking extends AutoIdBaseEntity {
   @Column(name = "booking_number", length = 50, nullable = false, unique = true)
   private String bookingNumber;
 
-  @Column(name = "price", nullable = false)
-  private Long price;
-
   @Enumerated(EnumType.STRING)
   @Column(name = "booking_status", length = 20, nullable = false)
   private BookingStatus bookingStatus;
@@ -53,7 +50,6 @@ public class Booking extends AutoIdBaseEntity {
     this.performanceId = performanceId;
     this.seatId = seatId;
     this.bookingNumber = bookingNumber;
-    this.price = price;
     this.bookingStatus = bookingStatus;
   }
 
