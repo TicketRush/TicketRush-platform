@@ -25,6 +25,10 @@ public class SeatFacade {
     return seatGetSeatLayoutsUseCase.execute(performanceId);
   }
 
+  public void holdSeat(Long seatId, LocalDateTime holdExpiredAt) {
+    seatHoldUseCase.execute(seatId, holdExpiredAt);
+  }
+
   public void tryLockSeat(Long bookingId, Long seatId, Long userId) {
     // 1. Redis 락 시도
     Optional<LocalDateTime> holdExpiredAtOpt = seatLockUseCase.execute(seatId, userId);
