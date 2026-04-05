@@ -1,13 +1,17 @@
 package com.ticketrush.boundedcontext.booking.app.usecase;
 
+import static com.ticketrush.global.status.ErrorStatus.BOOKING_NUMBER_RETRY_EXCEEDED;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.ticketrush.boundedcontext.booking.domain.policy.BookingNumberGenerator;
+import com.ticketrush.global.exception.BusinessException;
 import java.time.Duration;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,7 +27,6 @@ class BookingIssueNumberUseCaseTest {
 
   @Mock private StringRedisTemplate redisTemplate;
   @Mock private ValueOperations<String, String> valueOperations;
-
   @Mock private BookingNumberGenerator bookingNumberGenerator;
 
   @InjectMocks private BookingIssueNumberUseCase bookingIssueNumberUseCase;
@@ -52,14 +55,17 @@ class BookingIssueNumberUseCaseTest {
   void issueNumberFailAfterMaxRetriesWithMock() {
     // given: Redis의 setIfAbsent가 항상 false(중복)를 반환한다고 가정
     when(bookingNumberGenerator.generate()).thenReturn("A2C4E-789JK");
-
     when(redisTemplate.opsForValue()).thenReturn(valueOperations);
     when(valueOperations.setIfAbsent(anyString(), eq("RESERVED"), any(Duration.class)))
         .thenReturn(false);
 
     // when & then
     assertThatThrownBy(() -> bookingIssueNumberUseCase.execute())
-        .isInstanceOf(IllegalStateException.class)
-        .hasMessage("고유한 예약 번호를 생성할 수 없습니다. 잠시 후 다시 시도해주세요.");
+        .isInstanceOf(BusinessException.class)
+        .extracting(ex -> ((BusinessException) ex).getErrorStatus())
+        .isEqualTo(BOOKING_NUMBER_RETRY_EXCEEDED);
+
+    verify(bookingNumberGenerator, times(5)).generate();
+    verify(valueOperations, times(5)).setIfAbsent(anyString(), eq("RESERVED"), any(Duration.class));
   }
 }

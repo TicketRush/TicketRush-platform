@@ -28,6 +28,10 @@ public enum ErrorStatus {
   // Booking 409
   BOOKING_CANCEL_NOT_ALLOWED(HttpStatus.CONFLICT, "BOOKING_409_001", "취소할 수 없는 예매 상태입니다."),
 
+  // Booking 500
+  BOOKING_NUMBER_RETRY_EXCEEDED(
+      HttpStatus.INTERNAL_SERVER_ERROR, "BOOKING_500_001", "재시도 횟수를 초과하여 고유한 예약 번호를 생성할 수 없습니다."),
+
   // Seat 404
   SEAT_NOT_FOUND(HttpStatus.NOT_FOUND, "SEAT_404_001", "해당 좌석을 찾을 수 없습니다."),
 
