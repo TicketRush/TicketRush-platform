@@ -24,14 +24,18 @@ public class User extends AutoIdBaseEntity {
   @Column(nullable = true, length = 100)
   private String email;
 
+  @Column(nullable = true)
+  private String profileImage;
+
   @Enumerated(EnumType.STRING)
   @Column(name = "user_role", nullable = false)
   private UserRole role;
 
   @Builder
-  public User(String name, String email, String phone, UserRole role) {
+  public User(String name, String email, String phone, UserRole role, String profileImage) {
     this.name = name;
     this.email = email;
     this.role = role;
+    this.profileImage = profileImage;
   }
 }
