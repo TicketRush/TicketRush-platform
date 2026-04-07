@@ -4,10 +4,12 @@ import com.ticketrush.boundedcontext.performance.app.dto.request.PerformanceCrea
 import com.ticketrush.boundedcontext.performance.app.dto.response.PerformanceCreateResponse;
 import com.ticketrush.boundedcontext.performance.app.mapper.PerformanceMapper;
 import com.ticketrush.boundedcontext.performance.domain.entity.Performance;
-import com.ticketrush.global.util.S3UploadUtils;
+import com.ticketrush.boundedcontext.performance.domain.event.PerformanceCreatedEvent;
 import com.ticketrush.boundedcontext.performance.out.repository.PerformanceRepository;
+import com.ticketrush.global.eventpublisher.EventPublisher;
 import com.ticketrush.global.exception.BusinessException;
 import com.ticketrush.global.status.ErrorStatus;
+import com.ticketrush.global.util.S3UploadUtils;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,6 +23,7 @@ public class PerformanceCreateUseCase {
   private final S3UploadUtils s3UploadUtils;
   private final PerformanceRepository performanceRepository;
   private final PerformanceMapper performanceMapper;
+  private final EventPublisher eventPublisher;
 
   /** 공연 정보와 파일들을 받아 S3 업로드 후 DB에 저장 */
   @Transactional
@@ -42,6 +45,15 @@ public class PerformanceCreateUseCase {
     performance.updateUrls(mainImageUrl, model3dUrl, galleryUrls);
 
     Performance savedPerformance = performanceRepository.save(performance);
+
+    eventPublisher.publish(
+        new PerformanceCreatedEvent(
+            savedPerformance.getId(),
+            savedPerformance.getTitle(),
+            savedPerformance.getTotalSeats(),
+            savedPerformance.getShowDate(),
+            savedPerformance.getShowTime(),
+            savedPerformance.getPrice()));
 
     return performanceMapper.toCreateResponse(savedPerformance);
   }

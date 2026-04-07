@@ -35,7 +35,8 @@ public class PerformanceAdminController {
       content =
           @Content(
               mediaType = MediaType.MULTIPART_FORM_DATA_VALUE,
-              encoding = @Encoding(name = "request", contentType = MediaType.APPLICATION_JSON_VALUE)))
+              encoding =
+                  @Encoding(name = "request", contentType = MediaType.APPLICATION_JSON_VALUE)))
   @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public ResponseEntity<ApiResponse<PerformanceCreateResponse>> createPerformance(
       @RequestPart("request") @Valid PerformanceCreateRequest request,
