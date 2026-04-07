@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class BookingCompensateEventListener {
+public class SeatHoldFailedEventListener {
 
   private final BookingCancelUseCase bookingCancelUseCase;
   private final JsonConverter jsonConverter;
