@@ -51,12 +51,26 @@ public class SeatFacade {
         // 2) Booking 모듈로 보상 트랜잭션 이벤트 발행
         SeatHoldFailedEvent failedEvent =
             new SeatHoldFailedEvent(bookingId, seatId, "좌석 상태 업데이트 실패: " + e.getMessage());
-        eventPublisher.publish(failedEvent);
+        publishCompensationEvent(failedEvent);
       }
     } else {
       // 2-B. 실패: Booking 모듈로 보상 트랜잭션 이벤트 발행
       SeatHoldFailedEvent failedEvent = new SeatHoldFailedEvent(bookingId, seatId, "이미 선점된 좌석입니다.");
-      eventPublisher.publish(failedEvent);
+      publishCompensationEvent(failedEvent);
+    }
+  }
+
+  /** 보상 이벤트 발행을 담당하며, 실패 시 상위 리스너로 예외를 전파합니다. */
+  private void publishCompensationEvent(SeatHoldFailedEvent event) {
+    try {
+      eventPublisher.publish(event);
+      log.info("보상 이벤트(SeatHoldFailedEvent) 정상 발행 완료. bookingId: {}", event.bookingId());
+    } catch (Exception e) {
+      log.error("보상 트랜잭션 이벤트 발행에 실패했습니다. bookingId: {}", event.bookingId(), e);
+      /* 이 예외가 발생하면 최상단의 BookingCreatedEventListener에서 수동 커밋(ack.acknowledge())이
+        실행되지 않고, Spring Kafka의 재시도 정책을 타게 됩니다.
+      */
+      throw new RuntimeException("보상 이벤트 발행 실패로 인해 처리를 롤백하고 재시도합니다.", e);
     }
   }
 }
