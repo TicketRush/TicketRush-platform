@@ -7,7 +7,7 @@ import com.ticketrush.boundedcontext.performance.app.dto.request.PerformanceCrea
 import com.ticketrush.boundedcontext.performance.app.dto.response.PerformanceCreateResponse;
 import com.ticketrush.boundedcontext.performance.app.usecase.PerformanceCreateUseCase;
 import com.ticketrush.boundedcontext.performance.domain.types.Genre;
-import com.ticketrush.boundedcontext.performance.global.util.S3UploadUtils;
+import com.ticketrush.global.util.S3UploadUtils;
 import com.ticketrush.boundedcontext.performance.out.repository.PerformanceRepository;
 import java.time.LocalDate;
 import java.time.LocalTime;

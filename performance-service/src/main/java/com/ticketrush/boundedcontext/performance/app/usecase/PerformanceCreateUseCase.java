@@ -4,7 +4,7 @@ import com.ticketrush.boundedcontext.performance.app.dto.request.PerformanceCrea
 import com.ticketrush.boundedcontext.performance.app.dto.response.PerformanceCreateResponse;
 import com.ticketrush.boundedcontext.performance.app.mapper.PerformanceMapper;
 import com.ticketrush.boundedcontext.performance.domain.entity.Performance;
-import com.ticketrush.boundedcontext.performance.global.util.S3UploadUtils;
+import com.ticketrush.global.util.S3UploadUtils;
 import com.ticketrush.boundedcontext.performance.out.repository.PerformanceRepository;
 import com.ticketrush.global.exception.BusinessException;
 import com.ticketrush.global.status.ErrorStatus;

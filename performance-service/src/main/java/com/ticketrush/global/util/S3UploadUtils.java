@@ -1,4 +1,4 @@
-package com.ticketrush.boundedcontext.performance.global.util;
+package com.ticketrush.global.util;
 
 import com.ticketrush.global.exception.BusinessException;
 import com.ticketrush.global.status.ErrorStatus;

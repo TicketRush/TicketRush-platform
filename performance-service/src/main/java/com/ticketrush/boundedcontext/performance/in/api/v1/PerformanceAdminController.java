@@ -5,6 +5,9 @@ import com.ticketrush.boundedcontext.performance.app.dto.response.PerformanceCre
 import com.ticketrush.boundedcontext.performance.app.facade.PerformanceFacade;
 import com.ticketrush.global.dto.response.ApiResponse;
 import com.ticketrush.global.status.SuccessStatus;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Encoding;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +31,11 @@ public class PerformanceAdminController {
    * [TODO] 스웨거 설정 PR 머지 후 어노테이션 활성화 예정 @Operation(summary = "공연 전시 등록", description = "새로운 공연 정보를
    * 등록합니다.")
    */
+  @RequestBody(
+      content =
+          @Content(
+              mediaType = MediaType.MULTIPART_FORM_DATA_VALUE,
+              encoding = @Encoding(name = "request", contentType = MediaType.APPLICATION_JSON_VALUE)))
   @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public ResponseEntity<ApiResponse<PerformanceCreateResponse>> createPerformance(
       @RequestPart("request") @Valid PerformanceCreateRequest request,
