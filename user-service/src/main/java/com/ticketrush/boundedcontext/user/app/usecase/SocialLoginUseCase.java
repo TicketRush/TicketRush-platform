@@ -4,6 +4,7 @@ import com.ticketrush.boundedcontext.user.app.dto.request.UserCreateRequest;
 import com.ticketrush.boundedcontext.user.app.dto.response.UserCreateResponse;
 import com.ticketrush.boundedcontext.user.domain.entity.SocialAccount;
 import com.ticketrush.boundedcontext.user.domain.entity.User;
+import com.ticketrush.boundedcontext.user.domain.types.UserRole;
 import com.ticketrush.boundedcontext.user.out.SocialAccountRepository;
 import com.ticketrush.boundedcontext.user.out.UserRepository;
 import java.util.Optional;
@@ -34,7 +35,12 @@ public class SocialLoginUseCase {
     }
 
     // 3. 신규 유저 생성
-    User newUser = User.builder().name(request.name()).profileImage(request.profileImage()).build();
+    User newUser =
+        User.builder()
+            .name(request.name())
+            .profileImage(request.profileImage())
+            .userRole(UserRole.MEMBER)
+            .build();
 
     userRepository.save(newUser);
 
