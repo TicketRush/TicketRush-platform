@@ -112,4 +112,10 @@ public class Performance extends AutoIdBaseEntity {
     // [비즈니스 로직] 생성 시점에는 항상 UPCOMING 상태로 고정 (안전성 확보)
     this.performanceStatus = PerformanceStatus.UPCOMING;
   }
+
+  public void updateUrls(String mainImageUrl, String model3dUrl, List<String> galleryUrls) {
+    this.imageMainUrl = mainImageUrl;
+    this.image3dUrl = model3dUrl;
+    this.imageGalleryUrls = galleryUrls;
+  }
 }

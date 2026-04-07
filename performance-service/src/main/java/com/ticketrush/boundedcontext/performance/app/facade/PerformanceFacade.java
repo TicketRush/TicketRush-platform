@@ -3,8 +3,10 @@ package com.ticketrush.boundedcontext.performance.app.facade;
 import com.ticketrush.boundedcontext.performance.app.dto.request.PerformanceCreateRequest;
 import com.ticketrush.boundedcontext.performance.app.dto.response.PerformanceCreateResponse;
 import com.ticketrush.boundedcontext.performance.app.usecase.PerformanceCreateUseCase;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -12,7 +14,12 @@ public class PerformanceFacade {
 
   private final PerformanceCreateUseCase performanceCreateUseCase;
 
-  public PerformanceCreateResponse createPerformance(PerformanceCreateRequest request) {
-    return performanceCreateUseCase.execute(request);
+  public PerformanceCreateResponse createPerformance(
+      PerformanceCreateRequest request,
+      MultipartFile mainImage,
+      MultipartFile model3d,
+      List<MultipartFile> gallery) {
+
+    return performanceCreateUseCase.execute(request, mainImage, model3d, gallery);
   }
 }
