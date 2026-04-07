@@ -9,6 +9,9 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface PerformanceMapper {
 
+  @Mapping(target = "imageMainUrl", ignore = true)
+  @Mapping(target = "image3dUrl", ignore = true)
+  @Mapping(target = "imageGalleryUrls", ignore = true)
   Performance toEntity(PerformanceCreateRequest request);
 
   @Mapping(source = "id", target = "performanceId")
