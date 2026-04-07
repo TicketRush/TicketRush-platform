@@ -44,7 +44,6 @@ public class Booking extends AutoIdBaseEntity {
       Long userId,
       Long performanceId,
       Long seatId,
-      Long price,
       BookingStatus bookingStatus) {
     this.userId = userId;
     this.performanceId = performanceId;
