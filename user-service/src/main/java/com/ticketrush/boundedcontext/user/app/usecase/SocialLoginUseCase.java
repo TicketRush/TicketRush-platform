@@ -31,16 +31,11 @@ public class SocialLoginUseCase {
     if (account.isPresent()) {
       User user = account.get().getUser();
 
-      return new UserCreateResponse(user.getId(), user.getName(), user.getProfileImage(), false);
+      return new UserCreateResponse(user.getId(), user.getName(), false);
     }
 
     // 3. 신규 유저 생성
-    User newUser =
-        User.builder()
-            .name(request.name())
-            .profileImage(request.profileImage())
-            .userRole(UserRole.MEMBER)
-            .build();
+    User newUser = User.builder().name(request.name()).userRole(UserRole.MEMBER).build();
 
     userRepository.save(newUser);
 
@@ -54,7 +49,6 @@ public class SocialLoginUseCase {
 
     socialAccountRepository.save(socialAccount);
 
-    return new UserCreateResponse(
-        newUser.getId(), newUser.getName(), newUser.getProfileImage(), true);
+    return new UserCreateResponse(newUser.getId(), newUser.getName(), true);
   }
 }
