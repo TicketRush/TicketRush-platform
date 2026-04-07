@@ -34,7 +34,7 @@ public class SeatFacade {
     Optional<LocalDateTime> holdExpiredAtOpt = seatLockUseCase.execute(seatId, userId);
 
     if (holdExpiredAtOpt.isPresent()) {
-      // 2-A. 성공: Seat DB 상태를 HOLDING으로 업데이트
+      // 2-A. 성공: Seat DB 상태를 HOLD로 업데이트
       seatHoldUseCase.execute(seatId, holdExpiredAtOpt.get());
     } else {
       // 2-B. 실패: Booking 모듈로 보상 트랜잭션 이벤트 발행
