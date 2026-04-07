@@ -1,12 +1,14 @@
 package com.ticketrush.boundedcontext.user.app.usecase;
 
-import com.ticketrush.boundedcontext.user.app.dto.request.UserCreateRequest;
-import com.ticketrush.boundedcontext.user.app.dto.response.UserCreateResponse;
+import com.ticketrush.boundedcontext.user.app.dto.request.SocialCreateRequest;
+import com.ticketrush.boundedcontext.user.app.dto.response.SocialCreateResponse;
+import com.ticketrush.boundedcontext.user.app.mapper.SocialMapper;
 import com.ticketrush.boundedcontext.user.domain.entity.SocialAccount;
 import com.ticketrush.boundedcontext.user.domain.entity.User;
-import com.ticketrush.boundedcontext.user.domain.types.UserRole;
 import com.ticketrush.boundedcontext.user.out.SocialAccountRepository;
 import com.ticketrush.boundedcontext.user.out.UserRepository;
+import com.ticketrush.global.exception.BusinessException;
+import com.ticketrush.global.status.ErrorStatus;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -18,9 +20,12 @@ public class SocialLoginUseCase {
 
   private final SocialAccountRepository socialAccountRepository;
   private final UserRepository userRepository;
+  private final SocialMapper socialMapper;
 
   @Transactional
-  public UserCreateResponse execute(UserCreateRequest request) {
+  public SocialCreateResponse execute(SocialCreateRequest request) {
+
+    validation(request);
 
     // 1. 소셜 계정 조회
     Optional<SocialAccount> account =
@@ -31,24 +36,27 @@ public class SocialLoginUseCase {
     if (account.isPresent()) {
       User user = account.get().getUser();
 
-      return new UserCreateResponse(user.getId(), user.getName(), false);
+      return new SocialCreateResponse(user.getId(), user.getName(), false);
     }
 
     // 3. 신규 유저 생성
-    User newUser = User.builder().name(request.name()).userRole(UserRole.MEMBER).build();
-
+    User newUser = socialMapper.toUser(request);
     userRepository.save(newUser);
 
     // 4. 소셜 계정 생성
-    SocialAccount socialAccount =
-        SocialAccount.builder()
-            .user(newUser)
-            .socialProvider(request.socialProvider())
-            .providerUserId(request.socialId())
-            .build();
+    SocialAccount socialAccount = socialMapper.toSocialAccount(request); // newRequest =
+    socialAccount.setUser(newUser);
 
     socialAccountRepository.save(socialAccount);
 
-    return new UserCreateResponse(newUser.getId(), newUser.getName(), true);
+    return new SocialCreateResponse(
+        newUser.getId(), newUser.getName(), true // isNewUser는 서비스에서 결정
+        );
+  }
+
+  private void validation(SocialCreateRequest request) {
+    if (request.socialProvider() == null) {
+      throw new BusinessException(ErrorStatus.USER_SOCIAL_PROVIDER_REQUIRED);
+    }
   }
 }
