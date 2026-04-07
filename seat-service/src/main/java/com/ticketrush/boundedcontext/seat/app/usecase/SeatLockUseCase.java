@@ -14,7 +14,7 @@ public class SeatLockUseCase {
   private final StringRedisTemplate redisTemplate;
 
   private static final String SEAT_LOCK_PREFIX = "seat:lock:";
-  private static final int LOCK_TTL_MINUTES = 10;
+  private static final int LOCK_TTL_MINUTES = 5;
 
   public Optional<LocalDateTime> execute(Long seatId, Long userId) {
     String lockKey = SEAT_LOCK_PREFIX + seatId;
