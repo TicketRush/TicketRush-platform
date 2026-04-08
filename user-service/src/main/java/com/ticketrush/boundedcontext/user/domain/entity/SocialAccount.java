@@ -44,6 +44,10 @@ public class SocialAccount extends AutoIdBaseEntity {
   public SocialAccount(User user, SocialProvider socialProvider, String providerUserId) {
     this.user = user;
     this.socialProvider = socialProvider;
-    this.providerUserId = providerUserId;
+    this.providerUserId = providerUserId; // 소셜로그인이 준 고유 ID
+  }
+
+  public void setUser(User user) {
+    this.user = user;
   }
 }
