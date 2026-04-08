@@ -44,7 +44,7 @@ public class SocialLoginUseCase {
     userRepository.save(newUser);
 
     // 4. 소셜 계정 생성
-    SocialAccount socialAccount = socialMapper.toSocialAccount(request); // newRequest =
+    SocialAccount socialAccount = socialMapper.toSocialAccount(request);
     socialAccount.setUser(newUser);
 
     socialAccountRepository.save(socialAccount);
