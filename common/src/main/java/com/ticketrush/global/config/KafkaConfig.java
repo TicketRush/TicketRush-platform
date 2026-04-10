@@ -49,9 +49,9 @@ public class KafkaConfig {
   private static final int LINGER_MS = 5;
   private static final int BACKOFF_MAX_RETRIES = 5;
 
-  private static final long FETCH_MAX_WAIT_MS = 500L;
-  private static final long MAX_POLL_INTERVAL_MS = 300_000L;
-  private static final long DELIVERY_TIMEOUT_MS = 120_000L;
+  private static final int FETCH_MAX_WAIT_MS = 500;
+  private static final int MAX_POLL_INTERVAL_MS = 300_000;
+  private static final int DELIVERY_TIMEOUT_MS = 120_000;
   private static final long BACKOFF_INITIAL_INTERVAL_MS = 1_000L;
   private static final long BACKOFF_MAX_INTERVAL_MS = 60_000L;
 
