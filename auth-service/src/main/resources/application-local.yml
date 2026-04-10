@@ -11,6 +11,14 @@ spring:
   kafka:
     bootstrap-servers: localhost:29092
 
+oauth:
+  kakao:
+    client-id: ${KAKAO_CLIENT_ID}
+    client-secret: ${KAKAO_CLIENT_SECRET}
+    redirect-uri: ${KAKAO_REDIRECT_URI}
+    token-uri: https://kauth.kakao.com/oauth/token
+    user-info-uri: https://kapi.kakao.com/v2/user/me
+
 app:
   event-publisher:
     type: kafka
@@ -26,3 +34,8 @@ custom:
       - /
       - /favicon.ico
       - /error
+
+    oauth2:
+      allowed-redirect-domains:
+        - localhost
+        - 127.0.0.1

@@ -1,7 +1,7 @@
 package com.ticketrush.boundedcontext.user.in.api.v1;
 
-import com.ticketrush.boundedcontext.user.app.dto.request.SocialCreateRequest;
-import com.ticketrush.boundedcontext.user.app.dto.response.SocialCreateResponse;
+import com.ticketrush.boundedcontext.user.app.dto.request.SocialLoginRequest;
+import com.ticketrush.boundedcontext.user.app.dto.response.SocialLoginResponse;
 import com.ticketrush.boundedcontext.user.app.facade.UserFacade;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -21,7 +21,7 @@ public class UserController {
 
   @Operation(summary = "소셜로그인 회원 등록", description = "소셜로그인을 통해 회원을 등록합니다.")
   @PostMapping("/social-login")
-  public SocialCreateResponse socialLogin(@RequestBody SocialCreateRequest request) {
+  public SocialLoginResponse socialLogin(@RequestBody SocialLoginRequest request) {
     return userFacade.socialLogin(request);
   }
 }

@@ -1,19 +1,22 @@
 package com.ticketrush.boundedcontext.user.app.usecase;
 
-import com.ticketrush.boundedcontext.user.app.dto.request.SocialCreateRequest;
-import com.ticketrush.boundedcontext.user.app.dto.response.SocialCreateResponse;
+import com.ticketrush.boundedcontext.user.app.dto.request.SocialLoginRequest;
+import com.ticketrush.boundedcontext.user.app.dto.response.SocialLoginResponse;
 import com.ticketrush.boundedcontext.user.app.mapper.SocialMapper;
 import com.ticketrush.boundedcontext.user.domain.entity.SocialAccount;
 import com.ticketrush.boundedcontext.user.domain.entity.User;
+import com.ticketrush.boundedcontext.user.domain.types.SocialProvider;
 import com.ticketrush.boundedcontext.user.out.SocialAccountRepository;
 import com.ticketrush.boundedcontext.user.out.UserRepository;
 import com.ticketrush.global.exception.BusinessException;
 import com.ticketrush.global.status.ErrorStatus;
+import jakarta.transaction.Transactional;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class SocialLoginUseCase {
@@ -23,20 +26,24 @@ public class SocialLoginUseCase {
   private final SocialMapper socialMapper;
 
   @Transactional
-  public SocialCreateResponse execute(SocialCreateRequest request) {
+  public SocialLoginResponse execute(SocialLoginRequest request) {
 
-    validation(request);
+    log.info("🔥 user-service 받은 request = {}", request);
+
+    validate(request);
+
+    // 🔥 enum 변환 (핵심)
+    SocialProvider provider = parseProvider(request.getSocialProvider());
 
     // 1. 소셜 계정 조회
     Optional<SocialAccount> account =
-        socialAccountRepository.findBySocialProviderAndProviderUserId(
-            request.socialProvider(), request.socialId());
+        socialAccountRepository.findByProviderUserIdAndSocialProvider(
+            request.getSocialId(), provider);
 
-    // 2. 기존 유저라면 로그인 처리
+    // 2. 기존 유저 → 로그인
     if (account.isPresent()) {
       User user = account.get().getUser();
-
-      return new SocialCreateResponse(user.getId(), user.getName(), false);
+      return new SocialLoginResponse(user.getId(), user.getName(), false);
     }
 
     // 3. 신규 유저 생성
@@ -44,19 +51,30 @@ public class SocialLoginUseCase {
     userRepository.save(newUser);
 
     // 4. 소셜 계정 생성
-    SocialAccount socialAccount = socialMapper.toSocialAccount(request);
+    SocialAccount socialAccount = socialMapper.toSocialAccount(request, provider);
     socialAccount.setUser(newUser);
-
     socialAccountRepository.save(socialAccount);
 
-    return new SocialCreateResponse(
-        newUser.getId(), newUser.getName(), true // isNewUser는 서비스에서 결정
-        );
+    return new SocialLoginResponse(newUser.getId(), newUser.getName(), true);
   }
 
-  private void validation(SocialCreateRequest request) {
-    if (request.socialProvider() == null) {
+  // 입력값 검증
+  private void validate(SocialLoginRequest request) {
+    if (request.getSocialProvider() == null) {
       throw new BusinessException(ErrorStatus.USER_SOCIAL_PROVIDER_REQUIRED);
+    }
+
+    if (request.getSocialId() == null) {
+      throw new BusinessException(ErrorStatus.USER_SOCIAL_ID_REQUIRED);
+    }
+  }
+
+  // enum 변환 (안전 처리)
+  private SocialProvider parseProvider(String provider) {
+    try {
+      return SocialProvider.valueOf(provider.toUpperCase());
+    } catch (Exception e) {
+      throw new BusinessException(ErrorStatus.USER_SOCIAL_PROVIDER_INVALID);
     }
   }
 }
