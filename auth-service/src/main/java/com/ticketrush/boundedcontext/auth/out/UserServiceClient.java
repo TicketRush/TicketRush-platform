@@ -2,13 +2,14 @@ package com.ticketrush.boundedcontext.auth.out;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ticketrush.boundedcontext.auth.app.dto.internal.UserServiceSocialLoginRequest;
-import com.ticketrush.boundedcontext.auth.app.dto.internal.UserServiceSocialLoginResponse;
+import com.ticketrush.boundedcontext.auth.app.dto.request.UserServiceSocialLoginRequest;
+import com.ticketrush.boundedcontext.auth.app.dto.response.UserServiceSocialLoginResponse;
 import com.ticketrush.global.exception.BusinessException;
 import com.ticketrush.global.status.ErrorStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
@@ -41,9 +42,16 @@ public class UserServiceClient {
             .body(request)
             .retrieve()
             .onStatus(
-                status -> status.value() >= 400,
+                HttpStatusCode::is4xxClientError,
                 (req, res) -> {
-                  throw new BusinessException(ErrorStatus.AUTH_USER_COMMUNICATION_FAILED);
+                  log.error("user-service 4xx 에러 발생: status={}", res.getStatusCode());
+                  throw new BusinessException(ErrorStatus.AUTH_USER_BAD_REQUEST);
+                })
+            .onStatus(
+                HttpStatusCode::is5xxServerError,
+                (req, res) -> {
+                  log.error("user-service 5xx 에러 발생: status={}", res.getStatusCode());
+                  throw new BusinessException(ErrorStatus.AUTH_USER_SERVER_ERROR);
                 })
             .body(UserServiceSocialLoginResponse.class);
 

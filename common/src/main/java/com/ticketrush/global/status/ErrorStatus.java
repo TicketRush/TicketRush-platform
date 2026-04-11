@@ -21,15 +21,22 @@ public enum ErrorStatus {
 
   // Auth 400
   AUTH_PROVIDER_NOT_SUPPORT(HttpStatus.BAD_REQUEST, "AUTH_400_001", "지원하지 않는 소셜로그인입니다."),
-  AUTH_USER_COMMUNICATION_FAILED(
-      HttpStatus.BAD_REQUEST, "AUTH_400_002", "user-service와 통신에 실패했습니다."),
-  AUTH_KAKAO_TOKEN_FAILED(HttpStatus.BAD_REQUEST, "AUTH_400_003", "잘못된 카카오 토큰입니다."),
+  AUTH_KAKAO_TOKEN_FAILED(HttpStatus.BAD_REQUEST, "AUTH_400_002", "잘못된 카카오 토큰입니다."),
+  AUTH_USER_BAD_REQUEST(HttpStatus.BAD_REQUEST, "AUTH_400_003", "user-service 요청이 올바르지 않습니다."),
 
   // Auth 403
   AUTH_ACCESS_DENIED(HttpStatus.FORBIDDEN, "AUTH_403_001", "접근 권한이 없습니다."),
 
   // Auth 404
   AUTH_KAKAO_INFO_FAILED(HttpStatus.NOT_FOUND, "AUTH_404_001", "카카오 사용자 정보 조회를 실패하였습니다."),
+
+  // Auth 500
+  AUTH_USER_SERVER_ERROR(
+      HttpStatus.INTERNAL_SERVER_ERROR, "AUTH_500_001", "user-service 내부 오류가 발생했습니다."),
+
+  // Auth 503
+  AUTH_USER_COMMUNICATION_FAILED(
+      HttpStatus.SERVICE_UNAVAILABLE, "AUTH_503_001", "user-service와 통신에 실패했습니다."),
 
   // Performance 모듈 에러
   PERFORMANCE_MAIN_IMAGE_MISSING(HttpStatus.BAD_REQUEST, "PERFORMANCE_400_001", "메인 이미지는 필수입니다."),
@@ -43,7 +50,7 @@ public enum ErrorStatus {
   FILE_EXTENSION_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "FILE_400_003", "허용되지 않은 파일 형식입니다."),
 
   // User 400
-  USER_SOCIAL_PROVIDER_REQUIRED(HttpStatus.BAD_REQUEST, "USER_400_001", "socialProviderId는 필수입니다."),
+  USER_SOCIAL_PROVIDER_REQUIRED(HttpStatus.BAD_REQUEST, "USER_400_001", "socialProvider는 필수입니다."),
   USER_SOCIAL_ID_REQUIRED(HttpStatus.BAD_REQUEST, "USER_400_002", "socialId는 필수입니다."),
   USER_SOCIAL_PROVIDER_INVALID(
       HttpStatus.BAD_REQUEST, "USER_400_003", "socialProviderId가 유효하지 않습니다.");

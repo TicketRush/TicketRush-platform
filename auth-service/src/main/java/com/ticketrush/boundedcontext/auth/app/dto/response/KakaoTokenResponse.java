@@ -1,4 +1,4 @@
-package com.ticketrush.boundedcontext.auth.app.dto.kakao;
+package com.ticketrush.boundedcontext.auth.app.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

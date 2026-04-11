@@ -21,17 +21,24 @@ public class SocialLoginRequest {
   @JsonProperty("name")
   private String name;
 
+  private String maskValue(String value) {
+    if (value == null || value.isEmpty()) {
+      return value;
+    }
+    return "***";
+  }
+
   @Override
   public String toString() {
     return "SocialLoginRequest{"
         + "socialId='"
-        + socialId
+        + maskValue(socialId)
         + '\''
         + ", socialProvider='"
         + socialProvider
         + '\''
         + ", name='"
-        + name
+        + maskValue(name)
         + '\''
         + '}';
   }

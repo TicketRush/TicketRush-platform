@@ -1,4 +1,4 @@
-package com.ticketrush.boundedcontext.auth.app.dto.internal;
+package com.ticketrush.boundedcontext.auth.app.dto;
 
 import com.ticketrush.boundedcontext.auth.domain.types.SocialProvider;
 
