@@ -139,3 +139,6 @@ build/
 
 # Ignore Kotlin plugin data
 .kotlin
+
+# Claude Code (local only)
+.claude/
