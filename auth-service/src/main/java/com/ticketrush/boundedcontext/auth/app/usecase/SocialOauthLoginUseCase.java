@@ -1,16 +1,18 @@
 package com.ticketrush.boundedcontext.auth.app.usecase;
 
-import com.ticketrush.boundedcontext.auth.app.dto.SocialUserInfo;
 import com.ticketrush.boundedcontext.auth.app.dto.request.SocialOauthLoginRequest;
 import com.ticketrush.boundedcontext.auth.app.dto.request.UserServiceSocialLoginRequest;
 import com.ticketrush.boundedcontext.auth.app.dto.response.SocialOauthLoginResponse;
 import com.ticketrush.boundedcontext.auth.app.dto.response.UserServiceSocialLoginResponse;
+import com.ticketrush.boundedcontext.auth.domain.types.SocialUserInfo;
 import com.ticketrush.boundedcontext.auth.out.UserServiceClient;
 import com.ticketrush.boundedcontext.auth.out.oauth.SocialOauthService;
 import com.ticketrush.boundedcontext.auth.out.oauth.SocialOauthServiceFactory;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 /*
@@ -34,6 +36,8 @@ public class SocialOauthLoginUseCase {
                 socialUserInfo.socialId(),
                 socialUserInfo.socialProvider().name(),
                 socialUserInfo.name()));
+
+    log.info("🔥 user-service 응답 = {}", userResponse);
 
     return new SocialOauthLoginResponse(
         userResponse.userId(), userResponse.name(), userResponse.isNewUser());

@@ -2,7 +2,7 @@ package com.ticketrush.boundedcontext.auth.app.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-// auth-service가 인가 코드로 카카오에 토큰을 요청했을 때,  카카오가 토큰 응답 반환 DTO
+/** auth-service가 인가 코드로 카카오에 토큰을 요청했을 때, 카카오가 토큰 응답 반환 DTO 카카오 → 우리 서버로 오는 응답 DTO */
 public record KakaoTokenResponse(
     @JsonProperty("token_type") String tokenType, // ex) bearer
     @JsonProperty("access_token") String accessToken,
