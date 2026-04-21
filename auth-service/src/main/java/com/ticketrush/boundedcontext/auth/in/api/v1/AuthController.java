@@ -1,14 +1,22 @@
 package com.ticketrush.boundedcontext.auth.in.api.v1;
 
 import com.ticketrush.boundedcontext.auth.app.dto.request.SocialOauthLoginRequest;
-import com.ticketrush.boundedcontext.auth.app.dto.response.SocialOauthLoginResponse;
+import com.ticketrush.boundedcontext.auth.app.dto.request.TokenReissueRequest;
+import com.ticketrush.boundedcontext.auth.app.dto.response.OauthLoginResponse;
+import com.ticketrush.boundedcontext.auth.app.dto.response.TokenReissueResponse;
 import com.ticketrush.boundedcontext.auth.app.facade.AuthFacade;
+import com.ticketrush.global.dto.response.ApiResponse;
+import com.ticketrush.global.status.SuccessStatus;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -18,9 +26,32 @@ public class AuthController {
 
   private final AuthFacade authFacade;
 
-  @Operation(summary = "소셜 로그인", description = "소셜 제공자와 인가 코드를 받아 회원 조회 또는 회원 생성을 수행합니다.")
+  @Operation(summary = "OAuth2 로그인 URL 조회", description = "OAuth2 로그인 URL을 반환합니다.")
+  @GetMapping("/oauth/{provider}/url")
+  public ResponseEntity<ApiResponse<String>> getOAuthLoginUrl(
+      @PathVariable String provider, @RequestParam(required = false) String redirectUri) {
+
+    String url = authFacade.getOAuthLoginUrl(provider, redirectUri);
+    return ApiResponse.onSuccess(SuccessStatus.OK, url);
+  }
+
+  @Operation(summary = "소셜 로그인", description = "인가 코드를 통해 사용자 인증 후 JWT 토큰(access, refresh)을 발급합니다.")
   @PostMapping("/social/login")
-  public SocialOauthLoginResponse socialLogin(@RequestBody @Valid SocialOauthLoginRequest request) {
-    return authFacade.socialLogin(request);
+  public ResponseEntity<ApiResponse<OauthLoginResponse>> socialLogin(
+      @RequestBody @Valid SocialOauthLoginRequest request) {
+
+    OauthLoginResponse response = authFacade.socialLogin(request);
+    return ApiResponse.onSuccess(SuccessStatus.OK, response);
+  }
+
+  @Operation(
+      summary = "JWT 토큰 재발급",
+      description = "refresh token을 검증한 뒤 access token과 refresh token을 재발급합니다.")
+  @PostMapping("/reissue")
+  public ResponseEntity<ApiResponse<TokenReissueResponse>> reissue(
+      @RequestBody TokenReissueRequest request) {
+
+    TokenReissueResponse response = authFacade.reissue(request.refreshToken());
+    return ApiResponse.onSuccess(SuccessStatus.OK, response);
   }
 }

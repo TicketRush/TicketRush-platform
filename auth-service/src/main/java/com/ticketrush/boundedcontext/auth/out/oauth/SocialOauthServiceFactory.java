@@ -7,6 +7,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+// 여러 OAuth 서비스 구현체들 중에서 provider에 맞는 것을 찾아 반환하는 역할
 @Component
 @RequiredArgsConstructor
 public class SocialOauthServiceFactory {

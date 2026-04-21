@@ -7,6 +7,8 @@ spring:
     active: ${SPRING_PROFILES_ACTIVE:local}
   application:
     name: auth-service
+  jackson:
+    property-naming-strategy: SNAKE_CASE
 
 oauth:
   kakao:
@@ -24,6 +26,11 @@ custom:
 service:
   user-service:
     base-url: http://localhost:8081
+
+jwt:
+  secret: my-super-secret-key-12345678901234567890
+  access-token-expiration: 3600000      # 1시간(ms)
+  refresh-token-expiration: 1209600000  # 14일(ms)
 
 
 springdoc:

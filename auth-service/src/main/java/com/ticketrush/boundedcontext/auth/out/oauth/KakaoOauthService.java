@@ -1,9 +1,9 @@
 package com.ticketrush.boundedcontext.auth.out.oauth;
 
-import com.ticketrush.boundedcontext.auth.app.dto.SocialUserInfo;
 import com.ticketrush.boundedcontext.auth.app.dto.response.KakaoTokenResponse;
 import com.ticketrush.boundedcontext.auth.app.dto.response.KakaoUserInfoResponse;
 import com.ticketrush.boundedcontext.auth.domain.types.SocialProvider;
+import com.ticketrush.boundedcontext.auth.domain.types.SocialUserInfo;
 import com.ticketrush.global.exception.BusinessException;
 import com.ticketrush.global.status.ErrorStatus;
 import lombok.RequiredArgsConstructor;
@@ -70,6 +70,17 @@ public class KakaoOauthService implements SocialOauthService {
       log.error("Kakao OAuth 처리 중 에러 발생", e);
       throw new BusinessException(ErrorStatus.AUTH_KAKAO_INFO_FAILED);
     }
+  }
+
+  @Override
+  public String generateOAuthUrl(String redirectUri) {
+
+    return "https://kauth.kakao.com/oauth/authorize"
+        + "?client_id="
+        + clientId
+        + "&redirect_uri="
+        + redirectUri
+        + "&response_type=code";
   }
 
   private KakaoTokenResponse getToken(String code) {
