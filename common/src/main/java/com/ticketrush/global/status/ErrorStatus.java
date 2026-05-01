@@ -32,7 +32,17 @@ public enum ErrorStatus {
   // Auth 403
   AUTH_ACCESS_DENIED(HttpStatus.FORBIDDEN, "AUTH_403_001", "접근 권한이 없습니다."),
 
-<<<<<<< feature/36
+  // Auth 404
+  AUTH_KAKAO_INFO_FAILED(HttpStatus.NOT_FOUND, "AUTH_404_001", "카카오 사용자 정보 조회를 실패하였습니다."),
+
+  // Auth 500
+  AUTH_USER_SERVER_ERROR(
+      HttpStatus.INTERNAL_SERVER_ERROR, "AUTH_500_001", "user-service 내부 오류가 발생했습니다."),
+
+  // Auth 503
+  AUTH_USER_COMMUNICATION_FAILED(
+      HttpStatus.SERVICE_UNAVAILABLE, "AUTH_503_001", "user-service와 통신에 실패했습니다."),
+
   // Booking 404
   BOOKING_NOT_FOUND(HttpStatus.NOT_FOUND, "BOOKING_404_001", "해당 예매를 찾을 수 없습니다."),
 
@@ -54,20 +64,6 @@ public enum ErrorStatus {
   SEAT_ALREADY_LOCKED(HttpStatus.CONFLICT, "SEAT_409_002", "이미 다른 사용자가 결제를 진행 중인 좌석입니다."),
 
   // Performance 400
-=======
-  // Auth 404
-  AUTH_KAKAO_INFO_FAILED(HttpStatus.NOT_FOUND, "AUTH_404_001", "카카오 사용자 정보 조회를 실패하였습니다."),
-
-  // Auth 500
-  AUTH_USER_SERVER_ERROR(
-      HttpStatus.INTERNAL_SERVER_ERROR, "AUTH_500_001", "user-service 내부 오류가 발생했습니다."),
-
-  // Auth 503
-  AUTH_USER_COMMUNICATION_FAILED(
-      HttpStatus.SERVICE_UNAVAILABLE, "AUTH_503_001", "user-service와 통신에 실패했습니다."),
-
-  // Performance 모듈 에러
->>>>>>> develop
   PERFORMANCE_MAIN_IMAGE_MISSING(HttpStatus.BAD_REQUEST, "PERFORMANCE_400_001", "메인 이미지는 필수입니다."),
   PERFORMANCE_MODEL_3D_MISSING(HttpStatus.BAD_REQUEST, "PERFORMANCE_400_002", "3D 모델 파일은 필수입니다."),
   PERFORMANCE_GALLERY_LIMIT_EXCEEDED(
