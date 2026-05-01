@@ -8,11 +8,22 @@ spring:
   application:
     name: auth-service
 
+oauth:
+  kakao:
+    authorization-uri: https://kauth.kakao.com/oauth/authorize
+    token-uri: https://kauth.kakao.com/oauth/token
+    user-info-uri: https://kapi.kakao.com/v2/user/me
+    user-name-attribute: id
+
 custom:
   global:
     internalBackUrl: http://localhost:${server.port:8082}
   swagger:
     serverUrl: http://localhost:8080
+
+service:
+  user-service:
+    base-url: http://localhost:8081
 
 
 springdoc:
