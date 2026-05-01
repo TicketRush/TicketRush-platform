@@ -8,8 +8,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.KafkaHeaders;
+import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 @Slf4j
 @Component
@@ -22,14 +25,10 @@ public class KafkaDomainEventPublisher implements EventPublisher {
 
   @Override
   public void publish(DomainEvent event) {
-    // 1. Payload 직렬화
     String payload = jsonConverter.serialize(event);
-
-    // 2. Envelope 생성
     DomainEventEnvelope envelope = DomainEventEnvelope.of(event, payload);
 
-    // 3. Message 빌드 시 event.topic()과 event.key()를 직접 사용
-    var message =
+    Message<DomainEventEnvelope> message =
         MessageBuilder.withPayload(envelope)
             .setHeader(KafkaHeaders.TOPIC, event.topic())
             .setHeader(KafkaHeaders.KEY, event.key())
@@ -37,6 +36,21 @@ public class KafkaDomainEventPublisher implements EventPublisher {
             .setHeader("eventId", envelope.eventId())
             .build();
 
+    if (TransactionSynchronizationManager.isActualTransactionActive()) {
+      TransactionSynchronizationManager.registerSynchronization(
+          new TransactionSynchronization() {
+            @Override
+            public void afterCommit() {
+              sendMessage(message, event, envelope);
+            }
+          });
+    } else {
+      sendMessage(message, event, envelope);
+    }
+  }
+
+  private void sendMessage(
+      Message<DomainEventEnvelope> message, DomainEvent event, DomainEventEnvelope envelope) {
     kafkaTemplate
         .send(message)
         .whenComplete(
