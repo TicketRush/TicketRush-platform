@@ -1,7 +1,6 @@
 package com.ticketrush;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
@@ -16,6 +15,7 @@ import com.ticketrush.global.util.S3UploadUtils;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import org.mockito.ArgumentCaptor;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -91,6 +91,15 @@ class PerformanceCreateTest {
     assertThat(savedPerformance.getImageGalleryUrls()).hasSize(1);
     assertThat(savedPerformance.getImageGalleryUrls().get(0)).isEqualTo(expectedGalleryUrl);
 
-    then(eventPublisher).should().publish(any(PerformanceCreatedEvent.class));
+    ArgumentCaptor<PerformanceCreatedEvent> captor =
+        ArgumentCaptor.forClass(PerformanceCreatedEvent.class);
+    then(eventPublisher).should().publish(captor.capture());
+    PerformanceCreatedEvent publishedEvent = captor.getValue();
+    assertThat(publishedEvent.performanceId()).isEqualTo(savedPerformance.getId());
+    assertThat(publishedEvent.title()).isEqualTo(request.title());
+    assertThat(publishedEvent.totalSeats()).isEqualTo(request.totalSeats());
+    assertThat(publishedEvent.showDate()).isEqualTo(request.showDate());
+    assertThat(publishedEvent.showTime()).isEqualTo(request.showTime());
+    assertThat(publishedEvent.price()).isEqualTo(request.price());
   }
 }
