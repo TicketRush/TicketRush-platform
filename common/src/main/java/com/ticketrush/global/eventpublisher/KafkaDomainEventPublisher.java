@@ -58,8 +58,7 @@ public class KafkaDomainEventPublisher implements EventPublisher {
         Thread.currentThread().interrupt(); // 인터럽트 상태 복구
       }
 
-      // 예외를 밖으로 던져 호출자가 실패를 인지하게 만듭니다.
-      throw new BusinessException(ErrorStatus.INTERNAL_SERVER_ERROR, "Kafka 이벤트 발행에 실패했습니다.");
+      throw new BusinessException(ErrorStatus.INFRA_KAFKA_PUBLISH_FAILED, e.getMessage());
     }
   }
 }
