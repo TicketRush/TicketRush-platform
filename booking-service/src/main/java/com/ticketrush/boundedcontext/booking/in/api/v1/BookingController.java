@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@Tag(name = "Booking API", description = "예약 관련 API")
+@Tag(name = "Booking", description = "예약 관련 API")
 @RestController
 @RequestMapping("/api/v1/booking")
 @RequiredArgsConstructor
@@ -27,7 +27,7 @@ public class BookingController {
   @Operation(
       summary = "예매 생성 (결제 대기 상태)",
       description = "사용자가 공연 좌석을 선택하면 예매를 생성하고 상태를 PENDING으로 설정합니다.")
-  @PostMapping("/pending")
+  @PostMapping
   public ResponseEntity<ApiResponse<BookingPendingResponse>> createPendingBooking(
       @Valid @RequestBody BookingPendingRequest request) {
 
