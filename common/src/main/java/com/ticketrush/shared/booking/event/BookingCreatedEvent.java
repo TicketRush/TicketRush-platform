@@ -13,7 +13,7 @@ public record BookingCreatedEvent(Long bookingId, Long seatId, Long performanceI
 
   @Override
   public String key() {
-    return String.valueOf(performanceId);
+    return String.valueOf(bookingId);
   }
 
   @Override
