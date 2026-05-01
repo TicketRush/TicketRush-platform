@@ -323,7 +323,7 @@
       <property name="basicOffset" value="2"/>
       <property name="braceAdjustment" value="2"/>
       <property name="caseIndent" value="2"/>
-      <property name="throwsIndent" value="4"/>
+      <property name="throwsIndent" value="2"/>
       <property name="lineWrappingIndentation" value="4"/>
       <property name="arrayInitIndent" value="2"/>
     </module>
@@ -364,14 +364,14 @@
           value="//ELLIPSIS[preceding-sibling::TYPE/ANNOTATIONS[ANNOTATION[LPAREN]
               or not(following-sibling::*)]]"/>
     </module>
-    <module name="ParenPad">
+<!--    <module name="ParenPad">
       <property name="tokens"
                value="ANNOTATION, ANNOTATION_FIELD_DEF, CTOR_CALL, CTOR_DEF, DOT, ENUM_CONSTANT_DEF,
                     EXPR, LITERAL_CATCH, LITERAL_DO, LITERAL_FOR, LITERAL_IF, LITERAL_NEW,
                     LITERAL_SWITCH, LITERAL_SYNCHRONIZED, LITERAL_WHILE, METHOD_CALL,
                     METHOD_DEF, QUESTION, RESOURCE_SPECIFICATION, SUPER_CTOR_CALL, LAMBDA,
                     RECORD_DEF, RECORD_PATTERN_DEF"/>
-    </module>
+    </module>-->
     <module name="OperatorWrap">
       <property name="option" value="NL"/>
       <property name="tokens"

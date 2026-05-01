@@ -26,12 +26,12 @@ public class User extends AutoIdBaseEntity {
 
   @Enumerated(EnumType.STRING)
   @Column(name = "user_role", nullable = false)
-  private UserRole role;
+  private UserRole userRole;
 
   @Builder
-  public User(String name, String email, String phone, UserRole role) {
+  public User(String name, String email, String phone, UserRole userRole) {
     this.name = name;
     this.email = email;
-    this.role = role;
+    this.userRole = userRole;
   }
 }
