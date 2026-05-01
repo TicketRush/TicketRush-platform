@@ -38,6 +38,11 @@ spring:
 app:
   event-publisher:
     type: kafka
+  kafka:
+    topics:
+      performance-events:
+        partitions: 1
+        replicas: 1
 
 custom:
   security:
