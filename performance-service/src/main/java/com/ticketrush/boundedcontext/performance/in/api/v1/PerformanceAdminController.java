@@ -5,9 +5,11 @@ import com.ticketrush.boundedcontext.performance.app.dto.response.PerformanceCre
 import com.ticketrush.boundedcontext.performance.app.facade.PerformanceFacade;
 import com.ticketrush.global.dto.response.ApiResponse;
 import com.ticketrush.global.status.SuccessStatus;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Encoding;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-/** [TODO] 스웨거 설정 PR 머지 후 어노테이션 활성화 예정 @Tag(name = "Performance", description = "공연 도메인 관리 API") */
+@Tag(name = "Performance", description = "공연 도메인 관리 API")
 @RestController
 @RequestMapping("/api/v1/performance")
 @RequiredArgsConstructor
@@ -27,10 +29,7 @@ public class PerformanceAdminController {
 
   private final PerformanceFacade performanceFacade;
 
-  /**
-   * [TODO] 스웨거 설정 PR 머지 후 어노테이션 활성화 예정 @Operation(summary = "공연 전시 등록", description = "새로운 공연 정보를
-   * 등록합니다.")
-   */
+  @Operation(summary = "공연 전시 등록", description = "새로운 공연 정보를 등록합니다.")
   @RequestBody(
       content =
           @Content(
