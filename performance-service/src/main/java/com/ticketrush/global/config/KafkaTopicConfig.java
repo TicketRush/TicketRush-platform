@@ -13,7 +13,6 @@ public class KafkaTopicConfig {
 
   @Bean
   public NewTopics performanceKafkaTopics() {
-    return new NewTopics(
-        TopicBuilder.name("performance-events").partitions(1).replicas(1).build());
+    return new NewTopics(TopicBuilder.name("performance-events").partitions(1).replicas(1).build());
   }
 }
