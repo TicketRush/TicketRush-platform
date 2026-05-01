@@ -66,6 +66,7 @@ public class SeatFacade {
       eventPublisher.publish(event);
       log.info("보상 이벤트(SeatHoldFailedEvent) 정상 발행 완료. bookingId: {}", event.bookingId());
     } catch (Exception e) {
+      // TODO: 추후 예매와 좌석 간의 정합성 보장을 위해 OUTBOX 패턴 도입 예정
       log.error("보상 트랜잭션 이벤트 발행에 실패했습니다. bookingId: {}", event.bookingId(), e);
       /* 이 예외가 발생하면 최상단의 BookingCreatedEventListener에서 수동 커밋(ack.acknowledge())이
         실행되지 않고, Spring Kafka의 재시도 정책을 타게 됩니다.
