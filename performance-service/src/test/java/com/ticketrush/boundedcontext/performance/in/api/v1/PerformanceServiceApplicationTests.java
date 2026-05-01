@@ -1,5 +1,6 @@
-package com.ticketrush;
+package com.ticketrush.boundedcontext.performance.in.api.v1;
 
+import com.ticketrush.PerformanceServiceApplication;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;

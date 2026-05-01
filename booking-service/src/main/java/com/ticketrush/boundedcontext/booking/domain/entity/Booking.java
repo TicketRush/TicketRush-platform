@@ -1,7 +1,9 @@
 package com.ticketrush.boundedcontext.booking.domain.entity;
 
 import com.ticketrush.boundedcontext.booking.domain.types.BookingStatus;
+import com.ticketrush.global.exception.BusinessException;
 import com.ticketrush.global.jpa.entity.AutoIdBaseEntity;
+import com.ticketrush.global.status.ErrorStatus;
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -32,9 +34,6 @@ public class Booking extends AutoIdBaseEntity {
   @Column(name = "booking_number", length = 50, nullable = false, unique = true)
   private String bookingNumber;
 
-  @Column(name = "price", nullable = false)
-  private Long price;
-
   @Enumerated(EnumType.STRING)
   @Column(name = "booking_status", length = 20, nullable = false)
   private BookingStatus bookingStatus;
@@ -45,13 +44,18 @@ public class Booking extends AutoIdBaseEntity {
       Long userId,
       Long performanceId,
       Long seatId,
-      Long price,
       BookingStatus bookingStatus) {
     this.userId = userId;
     this.performanceId = performanceId;
     this.seatId = seatId;
     this.bookingNumber = bookingNumber;
-    this.price = price;
     this.bookingStatus = bookingStatus;
+  }
+
+  public void cancel() {
+    if (this.bookingStatus != BookingStatus.PENDING) {
+      throw new BusinessException(ErrorStatus.BOOKING_CANCEL_NOT_ALLOWED);
+    }
+    this.bookingStatus = BookingStatus.CANCELED;
   }
 }

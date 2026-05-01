@@ -1,7 +1,9 @@
 package com.ticketrush.boundedcontext.seat.domain.entity;
 
 import com.ticketrush.boundedcontext.seat.domain.types.SeatStatus;
+import com.ticketrush.global.exception.BusinessException;
 import com.ticketrush.global.jpa.entity.AutoIdBaseEntity;
+import com.ticketrush.global.status.ErrorStatus;
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -49,5 +51,21 @@ public class Seat extends AutoIdBaseEntity {
     this.seatNumber = seatNumber;
     this.seatStatus = seatStatus;
     this.holdExpiredAt = holdExpiredAt;
+  }
+
+  public void hold(LocalDateTime expiredAt) {
+    // 1. 상태 검증
+    if (this.seatStatus != SeatStatus.AVAILABLE) {
+      throw new BusinessException(ErrorStatus.SEAT_NOT_AVAILABLE);
+    }
+
+    // 2. 시간 유효성 검증
+    if (expiredAt == null || expiredAt.isBefore(LocalDateTime.now())) {
+      throw new BusinessException(ErrorStatus.SEAT_HOLD_TIME_INVALID);
+    }
+
+    // 3. 상태 업데이트
+    this.seatStatus = SeatStatus.HOLD;
+    this.holdExpiredAt = expiredAt;
   }
 }

@@ -27,14 +27,11 @@ public class JacksonConfig {
   @Bean
   public JsonMapperBuilderCustomizer jacksonCustomizer() {
     return builder -> {
-      // 1. Naming Strategy 설정 (camelCase -> snake_case)
       builder.propertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
 
-      // 2. Null 값 제외 설정 (응답에서 제외)
       builder.changeDefaultPropertyInclusion(
           incl -> incl.withValueInclusion(JsonInclude.Include.NON_NULL));
 
-      // 3. Java 8 날짜 포맷 전역 설정
       DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(DATETIME_FORMAT);
       DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
       DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern(TIME_FORMAT);
