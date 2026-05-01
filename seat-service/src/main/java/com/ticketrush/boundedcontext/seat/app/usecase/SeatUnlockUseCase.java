@@ -1,20 +1,35 @@
 package com.ticketrush.boundedcontext.seat.app.usecase;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.redis.core.StringRedisTemplate;
+import lombok.extern.slf4j.Slf4j;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
+// @Transactional 제거 (Redis 작업이므로 DB 트랜잭션 불필요)
+@Slf4j
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class SeatUnlockUseCase {
 
-  private final StringRedisTemplate redisTemplate;
+  private final RedissonClient redissonClient;
   private static final String SEAT_LOCK_PREFIX = "seat:lock:";
 
   public void execute(Long seatId) {
     String lockKey = SEAT_LOCK_PREFIX + seatId;
-    redisTemplate.delete(lockKey);
+    RLock lock = redissonClient.getLock(lockKey);
+
+    /*
+     * 안전한 락 해제를 위한 2단계 검증
+     * 1. isLocked(): 현재 락이 걸려 있는 상태인지 확인
+     * 2. isHeldByCurrentThread(): 락을 획득한 스레드와 현재 해제를 요청한 스레드가 일치하는지 확인
+     */
+    if (lock.isLocked() && lock.isHeldByCurrentThread()) {
+      lock.unlock();
+      log.debug("Redisson 락 정상 해제 완료. seatId: {}", seatId);
+    } else {
+      // 이미 TTL이 지나서 풀렸거나, 다른 스레드(사용자)가 락을 획득한 상태이므로 무시합니다.
+      log.warn("락 해제 스킵: 락을 소유하고 있지 않거나 이미 자동 만료되었습니다. seatId: {}", seatId);
+    }
   }
 }
