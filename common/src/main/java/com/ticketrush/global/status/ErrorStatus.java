@@ -18,6 +18,8 @@ public enum ErrorStatus {
   VALIDATION_ERROR(HttpStatus.BAD_REQUEST, "VALID_400", "입력값이 올바르지 않습니다."),
   // Json 변환 관련 에러
   JSON_PROCESSING_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "JSON_501", "데이터 변환 중 오류가 발생했습니다."),
+  // Event 관련 에러
+  EVENT_PUBLISH_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "EVENT_500_001", "예매 이벤트 발행 중 오류가 발생했습니다."),
 
   // Auth 403
   AUTH_ACCESS_DENIED(HttpStatus.FORBIDDEN, "AUTH_403_001", "접근 권한이 없습니다."),
