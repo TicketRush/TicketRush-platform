@@ -1,4 +1,4 @@
-package com.ticketrush;
+package com.ticketrush.boundedcontext.performance.in.api.v1;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;

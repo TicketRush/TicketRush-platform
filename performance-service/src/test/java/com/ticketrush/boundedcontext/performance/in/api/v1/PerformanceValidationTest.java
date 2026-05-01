@@ -73,7 +73,7 @@ class PerformanceValidationTest {
 
     performMultipartRequest(request)
         .andExpect(status().isBadRequest())
-        .andExpect(jsonPath("$.code").value("VALID_400"))
+        .andExpect(jsonPath("$.code").value("VALID_400_001"))
         .andExpect(jsonPath("$.message").value(containsString("title")));
   }
 
@@ -96,7 +96,7 @@ class PerformanceValidationTest {
 
     performMultipartRequest(request)
         .andExpect(status().isBadRequest())
-        .andExpect(jsonPath("$.code").value("VALID_400"))
+        .andExpect(jsonPath("$.code").value("VALID_400_001"))
         .andExpect(jsonPath("$.message").value(containsString("genre")));
   }
 
@@ -120,7 +120,7 @@ class PerformanceValidationTest {
 
     performMultipartRequest(request)
         .andExpect(status().isBadRequest())
-        .andExpect(jsonPath("$.code").value("VALID_400"))
+        .andExpect(jsonPath("$.code").value("VALID_400_001"))
         .andExpect(jsonPath("$.message").value(containsString("title")))
         .andExpect(jsonPath("$.message").value(containsString("price")))
         .andExpect(jsonPath("$.message").value(containsString("address")));
