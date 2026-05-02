@@ -31,8 +31,9 @@ import java.lang.annotation.Target;
                         """
                         {
                           "isSuccess": false,
-                          "code": "COMMON_400",
-                          "message": "입력값이 올바르지 않습니다."
+                          "code": "VALID_400_001",
+                          "message": "입력값이 올바르지 않습니다.",
+                          "traceId": "trace-id-example"
                         }
                         """),
                 @ExampleObject(
@@ -43,7 +44,8 @@ import java.lang.annotation.Target;
                         {
                           "isSuccess": false,
                           "code": "PERFORMANCE_400_001",
-                          "message": "메인 이미지는 필수입니다."
+                          "message": "메인 이미지는 필수입니다.",
+                          "traceId": "trace-id-example"
                         }
                         """),
                 @ExampleObject(
@@ -54,7 +56,8 @@ import java.lang.annotation.Target;
                         {
                           "isSuccess": false,
                           "code": "PERFORMANCE_400_002",
-                          "message": "3D 모델 파일은 필수입니다."
+                          "message": "3D 모델 파일은 필수입니다.",
+                          "traceId": "trace-id-example"
                         }
                         """),
                 @ExampleObject(
@@ -65,7 +68,8 @@ import java.lang.annotation.Target;
                         {
                           "isSuccess": false,
                           "code": "PERFORMANCE_400_003",
-                          "message": "갤러리 이미지는 최대 3개까지 등록 가능합니다."
+                          "message": "갤러리 이미지는 최대 3개까지 업로드할 수 있습니다.",
+                          "traceId": "trace-id-example"
                         }
                         """)
               })),
@@ -86,7 +90,8 @@ import java.lang.annotation.Target;
                           {
                             "isSuccess": false,
                             "code": "COMMON_500",
-                            "message": "서버 에러, 관리자에게 문의 바랍니다."
+                            "message": "서버 에러, 관리자에게 문의 바랍니다.",
+                            "traceId": "trace-id-example"
                           }
                           """)))
 })
