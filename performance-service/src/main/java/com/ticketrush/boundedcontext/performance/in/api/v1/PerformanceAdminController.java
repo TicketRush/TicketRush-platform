@@ -4,6 +4,7 @@ import com.ticketrush.boundedcontext.performance.app.dto.request.PerformanceCrea
 import com.ticketrush.boundedcontext.performance.app.dto.response.PerformanceCreateResponse;
 import com.ticketrush.boundedcontext.performance.app.facade.PerformanceFacade;
 import com.ticketrush.boundedcontext.performance.in.api.v1.swagger.PerformanceCreateApiResponses;
+import com.ticketrush.boundedcontext.performance.in.api.v1.swagger.PerformanceCreateSwaggerBody;
 import com.ticketrush.global.dto.response.ApiResponse;
 import com.ticketrush.global.status.SuccessStatus;
 import io.swagger.v3.oas.annotations.Operation;
@@ -59,7 +60,7 @@ public class PerformanceAdminController {
       content =
           @Content(
               mediaType = MediaType.MULTIPART_FORM_DATA_VALUE,
-              schema = @Schema(implementation = PerformanceCreateRequest.class),
+              schema = @Schema(implementation = PerformanceCreateSwaggerBody.class),
               encoding =
                   @Encoding(name = "request", contentType = MediaType.APPLICATION_JSON_VALUE)))
   @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
