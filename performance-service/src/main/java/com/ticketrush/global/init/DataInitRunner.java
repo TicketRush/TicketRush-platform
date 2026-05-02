@@ -22,12 +22,11 @@ public class DataInitRunner implements ApplicationRunner {
 
   private final PerformanceRepository performanceRepository;
 
-  private static final String PLACEHOLDER_MAIN_IMAGE =
-      "https://placehold.co/800x450/1a1a2e/ffffff?text=Main+Image";
-  private static final String PLACEHOLDER_MODEL_3D =
-      "https://placehold.co/400x400/16213e/ffffff?text=3D+Model";
-  private static final String PLACEHOLDER_GALLERY =
-      "https://placehold.co/600x400/0f3460/ffffff?text=Gallery";
+  private static final String FAKE_S3_BASE =
+      "https://ticketrush-fake-s3.s3.ap-northeast-2.amazonaws.com/temp/";
+  private static final String PLACEHOLDER_MAIN_IMAGE = FAKE_S3_BASE + "main-image.jpg";
+  private static final String PLACEHOLDER_MODEL_3D = FAKE_S3_BASE + "model-3d.glb";
+  private static final String PLACEHOLDER_GALLERY = FAKE_S3_BASE + "gallery.jpg";
 
   @Override
   @Transactional
