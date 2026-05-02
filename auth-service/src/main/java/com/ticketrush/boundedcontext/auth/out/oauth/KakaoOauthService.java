@@ -113,4 +113,9 @@ public class KakaoOauthService implements SocialOauthService {
         .retrieve()
         .body(KakaoUserInfoResponse.class);
   }
+
+  @Override
+  public String getDefaultRedirectUri() {
+    return redirectUri;
+  }
 }

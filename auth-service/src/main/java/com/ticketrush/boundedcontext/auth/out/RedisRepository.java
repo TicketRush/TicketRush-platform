@@ -2,12 +2,14 @@ package com.ticketrush.boundedcontext.auth.out;
 
 import java.time.Duration;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
 
-@Service
+@Slf4j
+@Repository
 @RequiredArgsConstructor
-public class RedisService {
+public class RedisRepository {
 
   private final RedisTemplate<String, String> redisTemplate;
 
@@ -31,11 +33,8 @@ public class RedisService {
   public boolean isValidRefreshToken(Long userId, String refreshToken) {
     String saved = getRefreshToken(userId);
 
-    System.out.println("요청 토큰 길이 = " + refreshToken.length());
-    System.out.println("저장 토큰 길이 = " + (saved != null ? saved.length() : 0));
-
-    System.out.println("요청 토큰 = [" + refreshToken + "]");
-    System.out.println("저장 토큰 = [" + saved + "]");
+    log.debug("요청 토큰 길이 = {}", refreshToken != null ? refreshToken.length() : 0);
+    log.debug("저장 토큰 길이 = {}", saved != null ? saved.length() : 0);
 
     return saved != null && saved.equals(refreshToken);
   }

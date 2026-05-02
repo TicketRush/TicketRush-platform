@@ -29,7 +29,7 @@ public class AuthController {
   @Operation(summary = "OAuth2 로그인 URL 조회", description = "OAuth2 로그인 URL을 반환합니다.")
   @GetMapping("/oauth/{provider}/url")
   public ResponseEntity<ApiResponse<String>> getOAuthLoginUrl(
-      @PathVariable String provider, @RequestParam(required = false) String redirectUri) {
+      @PathVariable String provider, @RequestParam String redirectUri) {
 
     String url = authFacade.getOAuthLoginUrl(provider, redirectUri);
     return ApiResponse.onSuccess(SuccessStatus.OK, url);
@@ -49,7 +49,7 @@ public class AuthController {
       description = "refresh token을 검증한 뒤 access token과 refresh token을 재발급합니다.")
   @PostMapping("/reissue")
   public ResponseEntity<ApiResponse<TokenReissueResponse>> reissue(
-      @RequestBody TokenReissueRequest request) {
+      @RequestBody @Valid TokenReissueRequest request) {
 
     TokenReissueResponse response = authFacade.reissue(request.refreshToken());
     return ApiResponse.onSuccess(SuccessStatus.OK, response);

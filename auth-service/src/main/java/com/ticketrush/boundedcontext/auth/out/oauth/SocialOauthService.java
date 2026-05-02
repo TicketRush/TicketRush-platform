@@ -10,4 +10,6 @@ public interface SocialOauthService {
   SocialUserInfo getUserInfo(String code);
 
   String generateOAuthUrl(String redirectUri);
+
+  String getDefaultRedirectUri();
 }
