@@ -33,7 +33,7 @@ public record PerformanceCreateRequest(
         LocalTime showTime,
     @Schema(description = "공연 시간 (분)", example = "120")
         @NotNull(message = "공연 시간은 필수입니다.")
-        @Positive(message = "총 좌석 수는 1개여야 합니다.")
+        @Positive(message = "공연 시간은 0보다 커야 합니다.")
         Integer durationMinutes,
     @Schema(description = "티켓 가격 (원)", example = "150000")
         @NotNull(message = "가격은 필수입니다.")
