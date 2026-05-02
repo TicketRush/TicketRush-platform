@@ -3,11 +3,13 @@ package com.ticketrush.boundedcontext.performance.in.api.v1;
 import com.ticketrush.boundedcontext.performance.app.dto.request.PerformanceCreateRequest;
 import com.ticketrush.boundedcontext.performance.app.dto.response.PerformanceCreateResponse;
 import com.ticketrush.boundedcontext.performance.app.facade.PerformanceFacade;
+import com.ticketrush.boundedcontext.performance.in.api.v1.swagger.PerformanceCreateApiResponses;
 import com.ticketrush.global.dto.response.ApiResponse;
 import com.ticketrush.global.status.SuccessStatus;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Encoding;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -21,7 +23,7 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-@Tag(name = "Performance", description = "공연 도메인 관리 API")
+@Tag(name = "Performance Admin", description = "공연 관리자 API")
 @RestController
 @RequestMapping("/api/v1/performance")
 @RequiredArgsConstructor
@@ -29,11 +31,35 @@ public class PerformanceAdminController {
 
   private final PerformanceFacade performanceFacade;
 
-  @Operation(summary = "공연 전시 등록", description = "새로운 공연 정보를 등록합니다.")
+  @Operation(
+      summary = "공연 등록",
+      description =
+          """
+          새로운 공연 정보를 등록합니다.
+
+          **요청 형식:** `multipart/form-data`
+          - `request` 파트: 공연 정보 JSON (Content-Type: application/json)
+          - `mainImage` 파트: 메인 이미지 파일
+          - `model3d` 파트: 3D 모델 파일
+          - `gallery` 파트: 갤러리 이미지 파일 (선택, 최대 3개)
+
+          **장르 코드:**
+          | 코드 | 설명 |
+          |------|------|
+          | MUSICAL | 뮤지컬 |
+          | CONCERT | 콘서트 |
+          | CLASSIC | 클래식 |
+          | JAZZ | 재즈 |
+          | FESTIVAL | 페스티벌 |
+          | BALLET | 발레/무용 |
+          | FANMEETING | 팬미팅 |
+          """)
+  @PerformanceCreateApiResponses
   @RequestBody(
       content =
           @Content(
               mediaType = MediaType.MULTIPART_FORM_DATA_VALUE,
+              schema = @Schema(implementation = PerformanceCreateRequest.class),
               encoding =
                   @Encoding(name = "request", contentType = MediaType.APPLICATION_JSON_VALUE)))
   @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -43,7 +69,6 @@ public class PerformanceAdminController {
       @RequestPart("model3d") MultipartFile model3d,
       @RequestPart(value = "gallery", required = false) List<MultipartFile> gallery) {
 
-    // Facade에서 파일 업로드와 정보 저장을 함께 처리하도록 위임
     PerformanceCreateResponse response =
         performanceFacade.createPerformance(request, mainImage, model3d, gallery);
 
