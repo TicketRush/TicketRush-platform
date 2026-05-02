@@ -2,18 +2,22 @@ package com.ticketrush.boundedcontext.performance.in.api.v1;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
 
 import com.ticketrush.boundedcontext.performance.app.dto.request.PerformanceCreateRequest;
 import com.ticketrush.boundedcontext.performance.app.dto.response.PerformanceCreateResponse;
 import com.ticketrush.boundedcontext.performance.app.usecase.PerformanceCreateUseCase;
+import com.ticketrush.boundedcontext.performance.domain.event.PerformanceCreatedEvent;
 import com.ticketrush.boundedcontext.performance.domain.types.Genre;
-import com.ticketrush.boundedcontext.performance.global.util.S3UploadUtils;
 import com.ticketrush.boundedcontext.performance.out.repository.PerformanceRepository;
+import com.ticketrush.global.eventpublisher.EventPublisher;
+import com.ticketrush.global.util.S3UploadUtils;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -34,6 +38,7 @@ import org.springframework.web.multipart.MultipartFile;
 class PerformanceCreateTest {
 
   @MockitoBean private S3UploadUtils s3UploadUtils;
+  @MockitoBean private EventPublisher eventPublisher;
 
   @Autowired private PerformanceCreateUseCase performanceCreateUseCase;
 
@@ -85,5 +90,16 @@ class PerformanceCreateTest {
     assertThat(savedPerformance.getImage3dUrl()).isEqualTo(expectedModelUrl);
     assertThat(savedPerformance.getImageGalleryUrls()).hasSize(1);
     assertThat(savedPerformance.getImageGalleryUrls().get(0)).isEqualTo(expectedGalleryUrl);
+
+    ArgumentCaptor<PerformanceCreatedEvent> captor =
+        ArgumentCaptor.forClass(PerformanceCreatedEvent.class);
+    then(eventPublisher).should().publish(captor.capture());
+    PerformanceCreatedEvent publishedEvent = captor.getValue();
+    assertThat(publishedEvent.performanceId()).isEqualTo(savedPerformance.getId());
+    assertThat(publishedEvent.title()).isEqualTo(request.title());
+    assertThat(publishedEvent.totalSeats()).isEqualTo(request.totalSeats());
+    assertThat(publishedEvent.showDate()).isEqualTo(request.showDate());
+    assertThat(publishedEvent.showTime()).isEqualTo(request.showTime());
+    assertThat(publishedEvent.price()).isEqualTo(request.price());
   }
 }

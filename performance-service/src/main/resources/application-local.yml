@@ -1,3 +1,12 @@
+springdoc:
+  swagger-ui:
+    enabled: true
+  api-docs:
+    enabled: true
+  servers:
+    - url: http://localhost:8083
+      description: 로컬 서버
+
 spring:
   datasource:
     url: jdbc:mysql://localhost:3306/ticket_rush
@@ -29,6 +38,11 @@ spring:
 app:
   event-publisher:
     type: kafka
+  kafka:
+    topics:
+      performance-events:
+        partitions: 1
+        replicas: 1
 
 custom:
   security:
