@@ -68,4 +68,11 @@ public class Seat extends AutoIdBaseEntity {
     this.seatStatus = SeatStatus.HOLD;
     this.holdExpiredAt = expiredAt;
   }
+
+  public void releaseHold() {
+    if (this.seatStatus == SeatStatus.HOLD) {
+      this.seatStatus = SeatStatus.AVAILABLE;
+      this.holdExpiredAt = null;
+    }
+  }
 }
