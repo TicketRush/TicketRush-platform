@@ -5,8 +5,8 @@ import com.ticketrush.boundedcontext.auth.app.dto.request.UserServiceSocialLogin
 import com.ticketrush.boundedcontext.auth.app.dto.response.OauthLoginResponse;
 import com.ticketrush.boundedcontext.auth.app.dto.response.UserServiceSocialLoginResponse;
 import com.ticketrush.boundedcontext.auth.domain.types.SocialUserInfo;
-import com.ticketrush.boundedcontext.auth.out.RedisRepository;
-import com.ticketrush.boundedcontext.auth.out.UserServiceClient;
+import com.ticketrush.boundedcontext.auth.out.repository.RedisRepository;
+import com.ticketrush.boundedcontext.auth.out.apiclient.UserServiceClient;
 import com.ticketrush.boundedcontext.auth.out.oauth.SocialOauthService;
 import com.ticketrush.boundedcontext.auth.out.oauth.SocialOauthServiceFactory;
 import com.ticketrush.global.security.JwtTokenProvider;

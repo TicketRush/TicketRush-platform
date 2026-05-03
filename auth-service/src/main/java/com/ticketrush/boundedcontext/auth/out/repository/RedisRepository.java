@@ -1,4 +1,4 @@
-package com.ticketrush.boundedcontext.auth.out;
+package com.ticketrush.boundedcontext.auth.out.repository;
 
 import java.time.Duration;
 import lombok.RequiredArgsConstructor;
