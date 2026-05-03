@@ -17,6 +17,9 @@ public class BookingFacade {
   private final BookingCreateUseCase bookingCreateUseCase;
 
   public Booking createBooking(Long userId, Long performanceId, Long seatId) {
+    // TODO: 예매 생성 전, Performance 모듈을 호출하여 performanceId의 유효성과 예매 가능 상태 검증
+    // TODO: 유저 인증 로직 도입 후 userId 유효성 검증 추가
+
     // 1. 고유 예약 번호 발급
     String bookingNumber = bookingIssueNumberUseCase.execute();
 
