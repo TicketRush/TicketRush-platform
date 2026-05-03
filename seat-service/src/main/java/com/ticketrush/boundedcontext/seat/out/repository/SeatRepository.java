@@ -14,7 +14,7 @@ public interface SeatRepository extends JpaRepository<Seat, Long> {
 
   @Query(
       "SELECT new com.ticketrush.boundedcontext.seat.app.dto.response.SeatLayoutResponse("
-          + "s.id, sl.id, sl.rowNo, sl.colNo) "
+          + "s.id, sl.id, s.seatNumber) "
           + "FROM Seat s "
           + "JOIN SeatLayout sl ON s.seatLayoutId = sl.id "
           + "WHERE s.performanceId = :performanceId")

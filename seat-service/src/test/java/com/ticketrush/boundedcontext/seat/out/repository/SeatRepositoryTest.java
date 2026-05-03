@@ -22,44 +22,41 @@ class SeatRepositoryTest {
   @Autowired private TestEntityManager entityManager;
 
   @Test
-  @DisplayName("Seat과 SeatLayout을 조인하여 해당하는 공연의 DTO만 조회한다")
+  @DisplayName("Seat과 마스터 SeatLayout을 조인하여 해당하는 공연의 좌석 정보(DTO)만 조회한다")
   void findSeatLayoutsByPerformanceId() {
     // given
     Long targetPerformanceId = 1L;
     Long otherPerformanceId = 99L;
 
-    // 1. SeatLayout 데이터 세팅
-    SeatLayout layout1 =
-        SeatLayout.builder().performanceId(targetPerformanceId).rowNo("A").colNo(1).build();
-    SeatLayout layout2 =
-        SeatLayout.builder().performanceId(targetPerformanceId).rowNo("A").colNo(2).build();
+    // 1. 공연당 1개의 마스터 SeatLayout 세팅 (1대N 구조 반영)
+    SeatLayout targetLayout =
+        SeatLayout.builder().performanceId(targetPerformanceId).totalRows(10).maxCols(12).build();
     SeatLayout otherLayout =
-        SeatLayout.builder().performanceId(otherPerformanceId).rowNo("B").colNo(1).build();
+        SeatLayout.builder().performanceId(otherPerformanceId).totalRows(5).maxCols(5).build();
 
-    layout1 = entityManager.persist(layout1);
-    layout2 = entityManager.persist(layout2);
+    targetLayout = entityManager.persist(targetLayout);
     otherLayout = entityManager.persist(otherLayout);
 
-    // 2. Seat 데이터 세팅
+    // 2. 단일 마스터 레이아웃을 참조하는 여러 개의 Seat 데이터 세팅
     Seat seat1 =
         Seat.builder()
-            .seatLayoutId(layout1.getId())
+            .seatLayoutId(targetLayout.getId())
             .performanceId(targetPerformanceId)
-            .seatNumber("A1")
+            .seatNumber("A-1")
             .seatStatus(SeatStatus.AVAILABLE)
             .build();
     Seat seat2 =
         Seat.builder()
-            .seatLayoutId(layout2.getId())
+            .seatLayoutId(targetLayout.getId())
             .performanceId(targetPerformanceId)
-            .seatNumber("A2")
+            .seatNumber("A-2")
             .seatStatus(SeatStatus.AVAILABLE)
             .build();
     Seat otherSeat =
         Seat.builder()
             .seatLayoutId(otherLayout.getId())
             .performanceId(otherPerformanceId)
-            .seatNumber("B1")
+            .seatNumber("A-1")
             .seatStatus(SeatStatus.AVAILABLE)
             .build();
 
@@ -81,10 +78,9 @@ class SeatRepositoryTest {
         .extracting(
             SeatLayoutResponse::seatId,
             SeatLayoutResponse::seatLayoutId,
-            SeatLayoutResponse::rowNo,
-            SeatLayoutResponse::colNo)
+            SeatLayoutResponse::seatNumber)
         .containsExactlyInAnyOrder(
-            tuple(seat1.getId(), layout1.getId(), "A", 1),
-            tuple(seat2.getId(), layout2.getId(), "A", 2));
+            tuple(seat1.getId(), targetLayout.getId(), "A-1"),
+            tuple(seat2.getId(), targetLayout.getId(), "A-2"));
   }
 }
