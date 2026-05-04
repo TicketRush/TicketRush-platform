@@ -17,7 +17,7 @@ public class SwaggerConfig {
     return new OpenAPI()
         .servers(List.of(new Server().url("http://localhost:8080")))
 
-        // 🔥 1. Security 설정 추가
+        // 1. Security 설정 추가
         .components(
             new Components()
                 .addSecuritySchemes(
@@ -27,7 +27,7 @@ public class SwaggerConfig {
                         .scheme("bearer")
                         .bearerFormat("JWT")))
 
-        // 🔥 2. 전역 적용 (모든 API에 Authorization 붙음)
+        // 2. 전역 적용 (모든 API에 Authorization 붙음)
         .addSecurityItem(new SecurityRequirement().addList("bearerAuth"));
   }
 }

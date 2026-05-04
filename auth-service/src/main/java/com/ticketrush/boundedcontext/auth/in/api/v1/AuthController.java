@@ -62,7 +62,6 @@ public class AuthController {
   @PostMapping("/logout")
   public ResponseEntity<ApiResponse<Void>> logout(
       @RequestHeader(value = "Authorization", required = false) String bearerToken) {
-    log.info("🔥 [Controller] Authorization header = {}", bearerToken);
 
     authFacade.logout(bearerToken);
     return ApiResponse.onSuccess(SuccessStatus.OK);
