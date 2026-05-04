@@ -1,5 +1,7 @@
 package com.ticketrush.global.security;
 
+import com.ticketrush.global.exception.BusinessException;
+import com.ticketrush.global.status.ErrorStatus;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
@@ -89,7 +91,12 @@ public class JwtTokenProvider {
   }
 
   public Long getUserId(String token) {
-    return Long.valueOf(getClaims(token).getSubject());
+    try {
+      return Long.valueOf(getClaims(token).getSubject());
+    } catch (JwtException | IllegalArgumentException e) {
+      log.error("🔥 [JwtTokenProvider] JWT 파싱 실패", e);
+      throw new BusinessException(ErrorStatus.UNAUTHORIZED);
+    }
   }
 
   public String getTokenType(String token) {
@@ -98,5 +105,10 @@ public class JwtTokenProvider {
 
   public String getRole(String token) {
     return getClaims(token).get("role", String.class);
+  }
+
+  public long getRemainingTime(String token) {
+    Date expiration = getClaims(token).getExpiration();
+    return expiration.getTime() - System.currentTimeMillis();
   }
 }
