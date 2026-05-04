@@ -1,17 +1,23 @@
 package com.ticketrush.boundedcontext.auth.app.usecase;
 
-import com.ticketrush.boundedcontext.auth.app.dto.SocialUserInfo;
 import com.ticketrush.boundedcontext.auth.app.dto.request.SocialOauthLoginRequest;
 import com.ticketrush.boundedcontext.auth.app.dto.request.UserServiceSocialLoginRequest;
-import com.ticketrush.boundedcontext.auth.app.dto.response.SocialOauthLoginResponse;
+import com.ticketrush.boundedcontext.auth.app.dto.response.OauthLoginResponse;
 import com.ticketrush.boundedcontext.auth.app.dto.response.UserServiceSocialLoginResponse;
-import com.ticketrush.boundedcontext.auth.out.UserServiceClient;
+import com.ticketrush.boundedcontext.auth.domain.types.SocialUserInfo;
+import com.ticketrush.boundedcontext.auth.out.apiclient.UserServiceClient;
 import com.ticketrush.boundedcontext.auth.out.oauth.SocialOauthService;
 import com.ticketrush.boundedcontext.auth.out.oauth.SocialOauthServiceFactory;
+import com.ticketrush.boundedcontext.auth.out.repository.RedisRepository;
+import com.ticketrush.global.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 /*
 1. provider에 맞는 OAuth 서비스 선택
@@ -23,11 +29,16 @@ public class SocialOauthLoginUseCase {
 
   private final SocialOauthServiceFactory socialOauthServiceFactory;
   private final UserServiceClient userServiceClient;
+  private final JwtTokenProvider jwtTokenProvider;
+  private final RedisRepository redisRepository;
 
-  public SocialOauthLoginResponse execute(SocialOauthLoginRequest request) {
+  public OauthLoginResponse execute(SocialOauthLoginRequest request) {
+
+    // 1. OAuth 사용자 정보 조회
     SocialOauthService oauthService = socialOauthServiceFactory.getService(request.provider());
     SocialUserInfo socialUserInfo = oauthService.getUserInfo(request.code());
 
+    // 2. user-service 호출
     UserServiceSocialLoginResponse userResponse =
         userServiceClient.socialLogin(
             new UserServiceSocialLoginRequest(
@@ -35,7 +46,25 @@ public class SocialOauthLoginUseCase {
                 socialUserInfo.socialProvider().name(),
                 socialUserInfo.name()));
 
-    return new SocialOauthLoginResponse(
-        userResponse.userId(), userResponse.name(), userResponse.isNewUser());
+    Long userId = userResponse.userId();
+    log.info("🔥 user-service 응답 = {}", userResponse);
+
+    // 3. JWT 생성
+    String accessToken = jwtTokenProvider.createAccessToken(userId, "USER");
+    String refreshToken = jwtTokenProvider.createRefreshToken(userId);
+
+    // 4. Redis 저장
+    redisRepository.saveRefreshToken(
+        userId, refreshToken, jwtTokenProvider.getRefreshTokenExpiration());
+
+    // 5. 응답 반환
+    return new OauthLoginResponse(
+        userId,
+        userResponse.name(),
+        userResponse.isNewUser(),
+        accessToken,
+        refreshToken,
+        jwtTokenProvider.getAccessTokenExpiration(),
+        jwtTokenProvider.getRefreshTokenExpiration());
   }
 }
