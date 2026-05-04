@@ -1,5 +1,6 @@
 package com.ticketrush.boundedcontext.performance.app.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ticketrush.boundedcontext.performance.domain.types.Genre;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
@@ -27,9 +28,11 @@ public record PerformanceCreateRequest(
         String description,
     @Schema(description = "공연 날짜 (yyyy-MM-dd)", example = "2025-08-15")
         @NotNull(message = "공연 날짜는 필수입니다.")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
         LocalDate showDate,
     @Schema(description = "공연 시작 시간 (HH:mm:ss)", example = "19:00:00")
         @NotNull(message = "공연 시작 시간은 필수입니다.")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm:ss")
         LocalTime showTime,
     @Schema(description = "공연 시간 (분)", example = "120")
         @NotNull(message = "공연 시간은 필수입니다.")
