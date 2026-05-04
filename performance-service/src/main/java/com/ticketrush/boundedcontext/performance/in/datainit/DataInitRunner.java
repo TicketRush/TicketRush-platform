@@ -1,4 +1,4 @@
-package com.ticketrush.global.init;
+package com.ticketrush.boundedcontext.performance.in.datainit;
 
 import com.ticketrush.boundedcontext.performance.domain.entity.Performance;
 import com.ticketrush.boundedcontext.performance.domain.types.Genre;
