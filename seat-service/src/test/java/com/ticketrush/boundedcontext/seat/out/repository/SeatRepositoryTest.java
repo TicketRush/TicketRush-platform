@@ -7,6 +7,7 @@ import com.ticketrush.boundedcontext.seat.app.dto.response.SeatLayoutResponse;
 import com.ticketrush.boundedcontext.seat.domain.entity.Seat;
 import com.ticketrush.boundedcontext.seat.domain.entity.SeatLayout;
 import com.ticketrush.boundedcontext.seat.domain.types.SeatStatus;
+import java.time.LocalDateTime;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -82,5 +83,69 @@ class SeatRepositoryTest {
         .containsExactlyInAnyOrder(
             tuple(seat1.getId(), targetLayout.getId(), "A-1"),
             tuple(seat2.getId(), targetLayout.getId(), "A-2"));
+  }
+
+  @Test
+  @DisplayName("벌크 업데이트 쿼리로 시간이 만료된 HOLD 상태의 좌석을 AVAILABLE로 변경한다")
+  void releaseExpiredSeats_ChangesStatusToAvailable() {
+    // given
+    LocalDateTime now = LocalDateTime.now();
+
+    // 1. 이미 만료된 좌석 (HOLD 상태) -> 업데이트 대상 O
+    Seat expiredHoldSeat1 =
+        Seat.builder()
+            .seatLayoutId(1L)
+            .performanceId(100L)
+            .seatNumber("A1")
+            .seatStatus(SeatStatus.HOLD)
+            .holdExpiredAt(now.minusMinutes(1))
+            .build();
+
+    Seat expiredHoldSeat2 =
+        Seat.builder()
+            .seatLayoutId(1L)
+            .performanceId(100L)
+            .seatNumber("A2")
+            .seatStatus(SeatStatus.HOLD)
+            .holdExpiredAt(now.minusMinutes(5))
+            .build();
+
+    // 2. 만료되지 않은 좌석 (HOLD 상태) -> 업데이트 대상 X
+    Seat validHoldSeat =
+        Seat.builder()
+            .seatLayoutId(1L)
+            .performanceId(100L)
+            .seatNumber("A3")
+            .seatStatus(SeatStatus.HOLD)
+            .holdExpiredAt(now.plusMinutes(5))
+            .build();
+
+    // 3. 이미 결제 완료된 좌석 (SOLD 상태) -> 업데이트 대상 X
+    Seat soldSeat =
+        Seat.builder()
+            .seatLayoutId(1L)
+            .performanceId(100L)
+            .seatNumber("A4")
+            .seatStatus(SeatStatus.SOLD)
+            .holdExpiredAt(now.minusMinutes(1))
+            .build();
+
+    seatRepository.saveAll(List.of(expiredHoldSeat1, expiredHoldSeat2, validHoldSeat, soldSeat));
+
+    // when
+    int updatedCount =
+        seatRepository.releaseExpiredSeats(SeatStatus.AVAILABLE, SeatStatus.HOLD, now);
+
+    // then
+    assertThat(updatedCount).isEqualTo(2); // 만료된 HOLD 좌석 2개만 업데이트되어야 함
+
+    // DB에서 다시 조회하여 실제 상태 검증 (영속성 컨텍스트를 거치지 않고 DB에서 직접 확인하기 위해 벌크 연산 결과 검증)
+    Seat updatedSeat1 = seatRepository.findById(expiredHoldSeat1.getId()).orElseThrow();
+    Seat validSeat = seatRepository.findById(validHoldSeat.getId()).orElseThrow();
+    Seat updatedSoldSeat = seatRepository.findById(soldSeat.getId()).orElseThrow();
+
+    assertThat(updatedSeat1.getSeatStatus()).isEqualTo(SeatStatus.AVAILABLE); // AVAILABLE로 변경됨
+    assertThat(validSeat.getSeatStatus()).isEqualTo(SeatStatus.HOLD); // 변경되지 않음
+    assertThat(updatedSoldSeat.getSeatStatus()).isEqualTo(SeatStatus.SOLD); // 변경되지 않음
   }
 }
