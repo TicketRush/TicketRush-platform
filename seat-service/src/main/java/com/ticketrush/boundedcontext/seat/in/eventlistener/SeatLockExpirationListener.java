@@ -1,6 +1,7 @@
 package com.ticketrush.boundedcontext.seat.in.eventlistener;
 
 import com.ticketrush.boundedcontext.seat.app.usecase.SeatReleaseSingleUseCase;
+import java.nio.charset.StandardCharsets;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.connection.Message;
 import org.springframework.data.redis.listener.KeyExpirationEventMessageListener;
@@ -23,7 +24,7 @@ public class SeatLockExpirationListener extends KeyExpirationEventMessageListene
 
   @Override
   public void onMessage(Message message, byte[] pattern) {
-    String expiredKey = message.toString();
+    String expiredKey = new String(message.getBody(), StandardCharsets.UTF_8);
 
     // 만료된 키가 좌석 락(seat:lock:)인지 확인
     if (expiredKey.startsWith(SEAT_LOCK_PREFIX)) {
