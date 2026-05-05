@@ -20,16 +20,16 @@ public class SeatLayout extends AutoIdBaseEntity {
   @Column(nullable = false)
   private Long performanceId;
 
-  @Column(nullable = false, length = 10)
-  private String rowNo;
+  @Column(nullable = false)
+  private Integer totalRows; // 총 행의 개수 (예: 10)
 
   @Column(nullable = false)
-  private Integer colNo;
+  private Integer maxCols; // 열의 최대 개수 (예: 12)
 
   @Builder
-  public SeatLayout(Long performanceId, String rowNo, Integer colNo) {
+  public SeatLayout(Long performanceId, Integer totalRows, Integer maxCols) {
     this.performanceId = performanceId;
-    this.rowNo = rowNo;
-    this.colNo = colNo;
+    this.totalRows = totalRows;
+    this.maxCols = maxCols;
   }
 }

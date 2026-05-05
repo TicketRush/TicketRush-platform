@@ -7,6 +7,7 @@ import com.ticketrush.boundedcontext.seat.app.dto.response.SeatLayoutResponse;
 import com.ticketrush.boundedcontext.seat.domain.entity.Seat;
 import com.ticketrush.boundedcontext.seat.domain.entity.SeatLayout;
 import com.ticketrush.boundedcontext.seat.domain.types.SeatStatus;
+import java.time.LocalDateTime;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -22,44 +23,41 @@ class SeatRepositoryTest {
   @Autowired private TestEntityManager entityManager;
 
   @Test
-  @DisplayName("Seat과 SeatLayout을 조인하여 해당하는 공연의 DTO만 조회한다")
+  @DisplayName("Seat과 마스터 SeatLayout을 조인하여 해당하는 공연의 좌석 정보(DTO)만 조회한다")
   void findSeatLayoutsByPerformanceId() {
     // given
     Long targetPerformanceId = 1L;
     Long otherPerformanceId = 99L;
 
-    // 1. SeatLayout 데이터 세팅
-    SeatLayout layout1 =
-        SeatLayout.builder().performanceId(targetPerformanceId).rowNo("A").colNo(1).build();
-    SeatLayout layout2 =
-        SeatLayout.builder().performanceId(targetPerformanceId).rowNo("A").colNo(2).build();
+    // 1. 공연당 1개의 마스터 SeatLayout 세팅 (1대N 구조 반영)
+    SeatLayout targetLayout =
+        SeatLayout.builder().performanceId(targetPerformanceId).totalRows(10).maxCols(12).build();
     SeatLayout otherLayout =
-        SeatLayout.builder().performanceId(otherPerformanceId).rowNo("B").colNo(1).build();
+        SeatLayout.builder().performanceId(otherPerformanceId).totalRows(5).maxCols(5).build();
 
-    layout1 = entityManager.persist(layout1);
-    layout2 = entityManager.persist(layout2);
+    targetLayout = entityManager.persist(targetLayout);
     otherLayout = entityManager.persist(otherLayout);
 
-    // 2. Seat 데이터 세팅
+    // 2. 단일 마스터 레이아웃을 참조하는 여러 개의 Seat 데이터 세팅
     Seat seat1 =
         Seat.builder()
-            .seatLayoutId(layout1.getId())
+            .seatLayoutId(targetLayout.getId())
             .performanceId(targetPerformanceId)
-            .seatNumber("A1")
+            .seatNumber("A-1")
             .seatStatus(SeatStatus.AVAILABLE)
             .build();
     Seat seat2 =
         Seat.builder()
-            .seatLayoutId(layout2.getId())
+            .seatLayoutId(targetLayout.getId())
             .performanceId(targetPerformanceId)
-            .seatNumber("A2")
+            .seatNumber("A-2")
             .seatStatus(SeatStatus.AVAILABLE)
             .build();
     Seat otherSeat =
         Seat.builder()
             .seatLayoutId(otherLayout.getId())
             .performanceId(otherPerformanceId)
-            .seatNumber("B1")
+            .seatNumber("A-1")
             .seatStatus(SeatStatus.AVAILABLE)
             .build();
 
@@ -81,10 +79,73 @@ class SeatRepositoryTest {
         .extracting(
             SeatLayoutResponse::seatId,
             SeatLayoutResponse::seatLayoutId,
-            SeatLayoutResponse::rowNo,
-            SeatLayoutResponse::colNo)
+            SeatLayoutResponse::seatNumber)
         .containsExactlyInAnyOrder(
-            tuple(seat1.getId(), layout1.getId(), "A", 1),
-            tuple(seat2.getId(), layout2.getId(), "A", 2));
+            tuple(seat1.getId(), targetLayout.getId(), "A-1"),
+            tuple(seat2.getId(), targetLayout.getId(), "A-2"));
+  }
+
+  @Test
+  @DisplayName("벌크 업데이트 쿼리로 시간이 만료된 HOLD 상태의 좌석을 AVAILABLE로 변경한다")
+  void releaseExpiredSeats_ChangesStatusToAvailable() {
+    // given
+    LocalDateTime now = LocalDateTime.now();
+
+    // 1. 이미 만료된 좌석 (HOLD 상태) -> 업데이트 대상 O
+    Seat expiredHoldSeat1 =
+        Seat.builder()
+            .seatLayoutId(1L)
+            .performanceId(100L)
+            .seatNumber("A1")
+            .seatStatus(SeatStatus.HOLD)
+            .holdExpiredAt(now.minusMinutes(1))
+            .build();
+
+    Seat expiredHoldSeat2 =
+        Seat.builder()
+            .seatLayoutId(1L)
+            .performanceId(100L)
+            .seatNumber("A2")
+            .seatStatus(SeatStatus.HOLD)
+            .holdExpiredAt(now.minusMinutes(5))
+            .build();
+
+    // 2. 만료되지 않은 좌석 (HOLD 상태) -> 업데이트 대상 X
+    Seat validHoldSeat =
+        Seat.builder()
+            .seatLayoutId(1L)
+            .performanceId(100L)
+            .seatNumber("A3")
+            .seatStatus(SeatStatus.HOLD)
+            .holdExpiredAt(now.plusMinutes(5))
+            .build();
+
+    // 3. 이미 결제 완료된 좌석 (SOLD 상태) -> 업데이트 대상 X
+    Seat soldSeat =
+        Seat.builder()
+            .seatLayoutId(1L)
+            .performanceId(100L)
+            .seatNumber("A4")
+            .seatStatus(SeatStatus.SOLD)
+            .holdExpiredAt(now.minusMinutes(1))
+            .build();
+
+    seatRepository.saveAll(List.of(expiredHoldSeat1, expiredHoldSeat2, validHoldSeat, soldSeat));
+
+    // when
+    int updatedCount =
+        seatRepository.releaseExpiredSeats(SeatStatus.AVAILABLE, SeatStatus.HOLD, now);
+
+    // then
+    assertThat(updatedCount).isEqualTo(2); // 만료된 HOLD 좌석 2개만 업데이트되어야 함
+
+    // DB에서 다시 조회하여 실제 상태 검증 (영속성 컨텍스트를 거치지 않고 DB에서 직접 확인하기 위해 벌크 연산 결과 검증)
+    Seat updatedSeat1 = seatRepository.findById(expiredHoldSeat1.getId()).orElseThrow();
+    Seat validSeat = seatRepository.findById(validHoldSeat.getId()).orElseThrow();
+    Seat updatedSoldSeat = seatRepository.findById(soldSeat.getId()).orElseThrow();
+
+    assertThat(updatedSeat1.getSeatStatus()).isEqualTo(SeatStatus.AVAILABLE); // AVAILABLE로 변경됨
+    assertThat(validSeat.getSeatStatus()).isEqualTo(SeatStatus.HOLD); // 변경되지 않음
+    assertThat(updatedSoldSeat.getSeatStatus()).isEqualTo(SeatStatus.SOLD); // 변경되지 않음
   }
 }

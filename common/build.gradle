@@ -78,6 +78,9 @@ dependencies {
 
 	// aop
 	implementation 'org.springframework.boot:spring-boot-starter-aspectj'
+
+	// redis
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 }
 
 dependencyManagement {

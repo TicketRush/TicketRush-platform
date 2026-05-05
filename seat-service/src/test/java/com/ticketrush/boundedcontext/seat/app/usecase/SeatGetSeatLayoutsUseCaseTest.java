@@ -16,17 +16,18 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class SeatGetSeatLayoutsUseCaseTest {
 
-  @InjectMocks private SeatGetSeatLayoutsUseCase useCase; // 테스트 대상
+  @InjectMocks private SeatGetSeatLayoutsUseCase useCase;
 
-  @Mock private SeatRepository seatRepository; // 가짜 객체
+  @Mock private SeatRepository seatRepository;
 
   @Test
   @DisplayName("공연 ID에 해당하는 정적 좌석 맵 리스트를 반환한다")
   void executeReturnsSeatLayouts() {
     // given
     Long performanceId = 1L;
+    // DTO 변경 반영: (seatId, layoutId, seatNumber)
     List<SeatLayoutResponse> expectedResponses =
-        List.of(new SeatLayoutResponse(1L, 101L, "A", 1), new SeatLayoutResponse(2L, 102L, "A", 2));
+        List.of(new SeatLayoutResponse(1L, 101L, "A-1"), new SeatLayoutResponse(2L, 101L, "A-2"));
     given(seatRepository.findSeatLayoutsByPerformanceId(performanceId))
         .willReturn(expectedResponses);
 
@@ -36,6 +37,6 @@ class SeatGetSeatLayoutsUseCaseTest {
     // then
     assertThat(actualResponses).hasSize(2);
     assertThat(actualResponses.getFirst().seatId()).isEqualTo(1L);
-    assertThat(actualResponses.getFirst().rowNo()).isEqualTo("A");
+    assertThat(actualResponses.getFirst().seatNumber()).isEqualTo("A-1");
   }
 }
