@@ -1,6 +1,9 @@
 package com.ticketrush.global.security;
 
+import com.ticketrush.global.exception.BusinessException;
+import com.ticketrush.global.status.ErrorStatus;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -89,14 +92,28 @@ public class JwtTokenProvider {
   }
 
   public Long getUserId(String token) {
-    return Long.valueOf(getClaims(token).getSubject());
-  }
-
-  public String getTokenType(String token) {
-    return getClaims(token).get("type", String.class);
+    try {
+      return Long.valueOf(getClaims(token).getSubject());
+    } catch (JwtException | IllegalArgumentException e) {
+      throw new BusinessException(ErrorStatus.UNAUTHORIZED);
+    }
   }
 
   public String getRole(String token) {
     return getClaims(token).get("role", String.class);
+  }
+
+  public long getRemainingTime(String token) {
+    try {
+      Date expiration = getClaims(token).getExpiration();
+      return expiration.getTime() - System.currentTimeMillis();
+
+    } catch (ExpiredJwtException e) {
+      // 이미 만료 → 블랙리스트 의미 없음
+      return 0L;
+
+    } catch (JwtException | IllegalArgumentException e) {
+      throw new BusinessException(ErrorStatus.AUTH_INVALID_ACCESS_TOKEN);
+    }
   }
 }

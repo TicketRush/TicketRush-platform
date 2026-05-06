@@ -10,15 +10,18 @@ import com.ticketrush.global.status.SuccessStatus;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/auth")
@@ -53,5 +56,14 @@ public class AuthController {
 
     TokenReissueResponse response = authFacade.reissue(request.refreshToken());
     return ApiResponse.onSuccess(SuccessStatus.OK, response);
+  }
+
+  @Operation(summary = "소셜 로그아웃", description = "Refresh token 삭제를 통해 로그아웃합니다.")
+  @PostMapping("/logout")
+  public ResponseEntity<ApiResponse<Void>> logout(
+      @RequestHeader(value = "Authorization", required = false) String bearerToken) {
+
+    authFacade.logout(bearerToken);
+    return ApiResponse.onSuccess(SuccessStatus.OK);
   }
 }
