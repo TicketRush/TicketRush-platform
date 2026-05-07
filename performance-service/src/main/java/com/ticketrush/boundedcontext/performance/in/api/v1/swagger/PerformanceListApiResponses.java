@@ -2,7 +2,6 @@ package com.ticketrush.boundedcontext.performance.in.api.v1.swagger;
 
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import java.lang.annotation.Documented;
@@ -21,8 +20,6 @@ import java.lang.annotation.Target;
       content =
           @Content(
               mediaType = "application/json",
-              schema =
-                  @Schema(implementation = com.ticketrush.global.dto.response.ApiResponse.class),
               examples =
                   @ExampleObject(
                       name = "InvalidGenre",

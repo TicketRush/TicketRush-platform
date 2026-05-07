@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -52,7 +53,8 @@ public class PerformanceController {
   @GetMapping
   public ResponseEntity<ApiResponse<List<PerformanceListResponse>>> getPerformances(
       @Parameter(description = "장르 필터 (미입력 시 전체 조회)") @RequestParam(required = false) Genre genre,
-      @PageableDefault(size = 8, sort = "createdAt", direction = Sort.Direction.DESC)
+      @ParameterObject
+          @PageableDefault(size = 8, sort = "createdAt", direction = Sort.Direction.DESC)
           Pageable pageable) {
 
     Page<PerformanceListResponse> performances = performanceFacade.getPerformances(genre, pageable);
