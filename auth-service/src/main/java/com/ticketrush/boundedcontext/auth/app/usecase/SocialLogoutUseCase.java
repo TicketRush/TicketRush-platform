@@ -14,13 +14,9 @@ public class SocialLogoutUseCase {
   private final RedisRepository redisRepository;
   private final JwtTokenProvider jwtTokenProvider;
 
-  public void execute(Long userId, String accessToken) {
+  public void execute(Long userId) {
 
-    // 1. Refresh Token 삭제
+    // Refresh Token 삭제
     redisRepository.deleteRefreshToken(userId);
-
-    // 2. Access Token 블랙리스트 등록
-    long remainingTime = jwtTokenProvider.getRemainingTime(accessToken);
-    redisRepository.blacklistAccessToken(accessToken, remainingTime);
   }
 }

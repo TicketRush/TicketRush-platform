@@ -86,3 +86,8 @@ springdoc:
         url: /v3/api-docs/seat
       - name: ticket-service
         url: /v3/api-docs/ticket
+
+jwt:
+  secret: ${JWT_SECRET}
+  access-token-expiration: 3600000      # 1시간(ms)
+  refresh-token-expiration: 1209600000  # 14일(ms)
