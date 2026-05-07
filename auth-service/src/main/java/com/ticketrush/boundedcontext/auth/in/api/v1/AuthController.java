@@ -6,7 +6,9 @@ import com.ticketrush.boundedcontext.auth.app.dto.response.OauthLoginResponse;
 import com.ticketrush.boundedcontext.auth.app.dto.response.TokenReissueResponse;
 import com.ticketrush.boundedcontext.auth.app.facade.AuthFacade;
 import com.ticketrush.global.dto.response.ApiResponse;
+import com.ticketrush.global.exception.BusinessException;
 import com.ticketrush.global.security.CustomUserDetails;
+import com.ticketrush.global.status.ErrorStatus;
 import com.ticketrush.global.status.SuccessStatus;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
@@ -62,6 +64,10 @@ public class AuthController {
   @Operation(summary = "소셜 로그아웃", description = "Refresh token 삭제를 통해 로그아웃합니다.")
   @PostMapping("/logout")
   public ResponseEntity<ApiResponse<Void>> logout(@AuthenticationPrincipal CustomUserDetails user) {
+
+    if (user == null) {
+      throw new BusinessException(ErrorStatus.UNAUTHORIZED);
+    }
 
     authFacade.logout(user.getUserId());
 

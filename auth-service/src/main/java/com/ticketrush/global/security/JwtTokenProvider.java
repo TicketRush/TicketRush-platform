@@ -8,8 +8,8 @@ import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import java.nio.charset.StandardCharsets;
-import java.security.Key;
 import java.util.Date;
+import javax.crypto.SecretKey;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -18,7 +18,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class JwtTokenProvider {
 
-  private final Key key;
+  private final SecretKey key;
   private final long accessTokenExpiration;
   private final long refreshTokenExpiration;
 
@@ -75,7 +75,7 @@ public class JwtTokenProvider {
 
   public boolean validateToken(String token) {
     try {
-      Jwts.parser().verifyWith((javax.crypto.SecretKey) key).build().parseSignedClaims(token);
+      Jwts.parser().verifyWith(key).build().parseSignedClaims(token);
       return true;
     } catch (JwtException | IllegalArgumentException e) {
       log.warn("JWT 검증 실패: {}", e.getClass().getSimpleName());
@@ -84,11 +84,7 @@ public class JwtTokenProvider {
   }
 
   public Claims getClaims(String token) {
-    return Jwts.parser()
-        .verifyWith((javax.crypto.SecretKey) key)
-        .build()
-        .parseSignedClaims(token)
-        .getPayload();
+    return Jwts.parser().verifyWith(key).build().parseSignedClaims(token).getPayload();
   }
 
   public Long getUserId(String token) {

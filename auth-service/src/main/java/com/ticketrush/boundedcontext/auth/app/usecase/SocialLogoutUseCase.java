@@ -1,7 +1,6 @@
 package com.ticketrush.boundedcontext.auth.app.usecase;
 
 import com.ticketrush.boundedcontext.auth.out.repository.RedisRepository;
-import com.ticketrush.global.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class SocialLogoutUseCase {
 
   private final RedisRepository redisRepository;
-  private final JwtTokenProvider jwtTokenProvider;
 
   public void execute(Long userId) {
 

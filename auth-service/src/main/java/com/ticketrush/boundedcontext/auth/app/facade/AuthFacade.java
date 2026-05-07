@@ -44,7 +44,6 @@ public class AuthFacade {
 
   // 로그아웃
   public void logout(Long userId) {
-
     socialLogoutUseCase.execute(userId);
   }
 }

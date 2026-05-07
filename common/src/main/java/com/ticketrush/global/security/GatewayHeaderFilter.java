@@ -15,25 +15,38 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @Component
 public class GatewayHeaderFilter extends OncePerRequestFilter {
 
+  private static final String USER_ID_HEADER = "X-User-Id";
+  private static final String USER_ROLE_HEADER = "X-User-Role";
+
   @Override
   protected void doFilterInternal(
       HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
       throws ServletException, IOException {
 
-    String userId = request.getHeader("X-User-Id");
-    String role = request.getHeader("X-User-Role");
+    String userIdHeader = request.getHeader(USER_ID_HEADER);
+    String roleHeader = request.getHeader(USER_ROLE_HEADER);
 
-    if (userId != null && role != null) {
+    // 헤더가 모두 존재할 때만 인증 처리
+    if (userIdHeader != null && roleHeader != null) {
 
-      List<SimpleGrantedAuthority> authorities =
-          List.of(new SimpleGrantedAuthority("ROLE_" + role));
+      try {
+        Long userId = Long.valueOf(userIdHeader);
 
-      CustomUserDetails principal = new CustomUserDetails(Long.valueOf(userId), role);
+        List<SimpleGrantedAuthority> authorities =
+            List.of(new SimpleGrantedAuthority("ROLE_" + roleHeader));
 
-      UsernamePasswordAuthenticationToken authentication =
-          new UsernamePasswordAuthenticationToken(principal, null, authorities);
+        CustomUserDetails principal = new CustomUserDetails(userId, roleHeader);
 
-      SecurityContextHolder.getContext().setAuthentication(authentication);
+        UsernamePasswordAuthenticationToken authentication =
+            new UsernamePasswordAuthenticationToken(principal, null, authorities);
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+      } catch (NumberFormatException e) {
+
+        // 잘못된 헤더 값이면 인증 세팅 없이 통과
+        SecurityContextHolder.clearContext();
+      }
     }
 
     filterChain.doFilter(request, response);

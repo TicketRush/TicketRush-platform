@@ -1,6 +1,5 @@
-package com.ticketrush.config;
+package com.ticketrush.security;
 
-import com.ticketrush.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
@@ -28,13 +27,11 @@ public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
 
     // 토큰 없으면 그냥 통과 (로그인 API 등)
     if (token == null) {
-      log.info("🔥 토큰 없음");
       return chain.filter(exchange);
     }
 
     // JWT 검증
     if (!jwtTokenProvider.validateToken(token)) {
-      log.info("🔥 토큰 검증 실패");
 
       exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
       return exchange.getResponse().setComplete();
@@ -44,13 +41,10 @@ public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
     String type = jwtTokenProvider.getType(token);
 
     if (!"access".equals(type)) {
-      log.info("🔥 AccessToken 아님");
 
       exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
       return exchange.getResponse().setComplete();
     }
-
-    log.info("🔥 토큰 검증 성공");
 
     // 토큰에서 사용자 정보 추출
     Long userId = jwtTokenProvider.getUserId(token);
@@ -64,8 +58,13 @@ public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
         exchange
             .getRequest()
             .mutate()
-            .header("X-User-Id", String.valueOf(userId))
-            .header("X-User-Role", role)
+            .headers(
+                headers -> {
+                  headers.remove("X-User-Id");
+                  headers.remove("X-User-Role");
+                  headers.set("X-User-Id", String.valueOf(userId));
+                  headers.set("X-User-Role", role);
+                })
             .build();
 
     return chain.filter(exchange.mutate().request(request).build());
