@@ -22,7 +22,7 @@ public class SeatStatusScheduler {
       lockAtMostFor = "5m" // 노드가 죽었을 때 락이 자동으로 풀리는 최대 시간 (충분히 길게 설정)
       )
   public void scheduleReleaseExpiredHoldsFallback() {
-    log.debug("Fallback 스케줄러 동작: 유실된 만료 좌석 검사 시작");
+    log.info("Fallback 스케줄러 동작: 유실된 만료 좌석 검사 시작");
     seatReleaseExpiredUseCase.execute();
   }
 }
